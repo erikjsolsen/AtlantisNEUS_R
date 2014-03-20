@@ -5,6 +5,7 @@
   # - plots both BASE and SPATIAL and the COMPARISON in a MULTI-FACETED plot
 # By Erik Olsen
 # Modified: 2/3/2014
+# showed GitHub func
 
 
 library(ncdf)

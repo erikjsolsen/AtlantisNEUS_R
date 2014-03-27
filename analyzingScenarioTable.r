@@ -1,9 +1,10 @@
 # R-script for creating Heat-map /Quilt plot of table of variables vs Scenarios
 # FIRST: must create at table of Variables vs. Scenarios using "running biomultiplot.r" script
-# 5/2/2014
+# 25/3/2014
 # By Erik Olsen
 
 library(ggplot2)
+library(reshape2)
 
 setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/Analysis") #output catalogue from biomultiplot analysis
 
@@ -18,6 +19,9 @@ for (i in 2:length(SEY2)){
 #Make heatmap like plot using ggplot2
 SEY2[20]<-rownames(SEY2) #include variables as a column
 SEY2<-SEY2[2:20]
+aa<-c(1, 6,10, 14, 19) # columns w 100% closure - selct only scenarios yielding real results
+SEY2<-SEY2[aa] # create a subset w only real scenarios
+
 SEY.melt<-melt(SEY2, id=c("V20"))
 
 #create categories

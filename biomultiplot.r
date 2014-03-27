@@ -5,7 +5,7 @@
   # - compares the Base case with Spatial case by dividing Spatial/Base
   # - plots both BASE and SPATIAL and the COMPARISON in a MULTI-FACETED plot
 # By Erik Olsen
-# Modified: 2/5/2014
+# Modified: 3/27/2014 - change output to .png 
 
 biomultiplot <- function(baseNC, altNC, FuncNameFile,  AreaPoly, PlotOutFile) { 
   # INPUTS:
@@ -199,7 +199,7 @@ map4<-ggplot(data = PMD, aes(x = long, y = lat, fill = catVar, group = group)) +
   ggtitle(paste("BIOMASS Comparison base case w spatial case: ", PlotOutFile)) +facet_wrap(~variable)  + scale_fill_gradientn(colours=brewer.pal(7, "PiYG"), guide="legend", label=intLabels) # creates a faceted - multi plot
 
 map4 #plot maps
-ggsave(paste(PlotOutFile,".pdf"), scale = 1, dpi = 400)
+ggsave(paste(PlotOutFile,".png"), scale = 1, dpi = 400)
 
 CMSBase<<-colMeans(VarBox2004)
 colMeans(SVarBox2004) # output column Means of Scenario variable

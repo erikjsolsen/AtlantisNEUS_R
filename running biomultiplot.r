@@ -19,7 +19,7 @@ source("/Users/eriko/AtlantisNEUS_R/biomultiplot.r")
  
 # must run biomultiplot ONCE to get CMSBase (which is pushed from the function)
 # This is not good programming practice, but don't know how to push several variables to global.
-paste(SNames[4], "_Scen")<-biomultiplot ("neusDynEffort_Base_Effort_.nc", "/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/GoM10/neusGB10_out.nc",  "/Users/eriko/AtlantisNEUS_R/data_files/FuncGroupNamesInPlotOrderNEUS.csv", NEUS.f, "outTEST3")
+assign(paste0(SNames[4], "_Scen"), biomultiplot ("neusDynEffort_Base_Effort_.nc", "/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/GoM10/neusGB10_out.nc",  "/Users/eriko/AtlantisNEUS_R/data_files/FuncGroupNamesInPlotOrderNEUS.csv", NEUS.f, "outTEST3"))
 
 CMB<-as.data.frame(CMSBase) #convert to data.frame
 

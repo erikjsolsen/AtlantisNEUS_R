@@ -5,6 +5,7 @@
 #
 # By: Erik Olsen
 # Date: 30.06.2014
+# Updated: 23.07.2014
 # Using Robs normalized data sets
 
 
@@ -21,33 +22,6 @@ library("classInt", lib.loc="/Users/eriko/Library/R/3.0/library")
 ### Don' use any more
 ### Importing data files and species codes
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/data") 
-load("Totbiomass_atcodes.RData")
-survey_biom<-atl.biomass
-# must converst survey_biom to tons
-survey_biom<-cbind(survey_biom[1], survey_biom[2:23]/1000)
-load("Species_groups.RData")
-model_biom<-read.table("Modeled_Biomass.csv", head=TRUE, sep=" ")
-species_codes<-read.csv("NEUS_species_codes.csv")
-
-## normalizing data
-model_biom_means<-as.matrix(colMeans(model_biom[2:23]))
-survey_biom_means<-as.matrix(colMeans(survey_biom[2:23]))
-model_biom_n<-model_biom[2:23]
-survey_biom_n<-survey_biom[2:23]
-
-model_norm<-model_biom_n
-for (i in 1:50){
-  model_norm[i,]<-model_biom_n[i,]/model_biom_means
-  }
-
-survey_norm<-survey_biom_n
-for (i in 1:51){
-  survey_norm[i,]<-survey_biom_n[i,]/survey_biom_means
-}
-
-model_norm<-cbind(model_biom[1], model_norm)
-survey_norm<-cbind(survey_biom[1], survey_norm)
-
 
 
 
@@ -57,9 +31,13 @@ survey_norm<-cbind(survey_biom[1], survey_norm)
 model_biom<-read.table("Modeled_Biomass_std.csv", head=TRUE, sep=",")
 survey_biom<-read.table("Observed_Biomass_std.csv", head=TRUE, sep=",")
 species_codes<-read.csv("NEUS_species_codes.csv")
-mef<-read.table("MEF_table_initial.csv", head=TRUE, sep=",")
+mef<-read.table("MEF_table_initial.csv", head=TRUE, sep=",", row.names=1)
 
-# give real-world species names
+# importing table of skill metrics (RMSE, AE, AAE, RI, MEF) from table provided by Rob
+skill_table_biomass<-read.csv("Skill_table_biomass.csv", row.names=1)
+
+
+# give real-world species names to column heads
 NEUS.names<-colnames(model_biom)
 
 for (j in 2:length(NEUS.names)) {
@@ -68,6 +46,16 @@ for (j in 2:length(NEUS.names)) {
 
 colnames(model_biom)<-NEUS.names
 colnames(survey_biom)<-NEUS.names
+
+# giving real-world names to rows
+NEUS.names.rows<-rownames(skill_table_biomass)
+
+for (j in 1:length(NEUS.names.rows)) {
+  NEUS.names.rows[j]<-as.character(species_codes$NAME[match(NEUS.names.rows[j], species_codes$CODE)] )
+}
+
+rownames(mef)<-NEUS.names.rows
+rownames(skill_table_biomass)<-NEUS.names.rows
 
 
 ### BIOMASS PLOTS OVER TIME
@@ -101,7 +89,7 @@ survey_biom_tuned<-subset(survey_biom, Year<2005)
 survey_biom_pred<-subset(survey_biom, Year>2004)
 
 #empty data frame for correlation analyses
-cortab<-data.frame(tuned_S=numeric(23), pred_S=numeric(23), tuned_P=numeric(23), pred_P=numeric(23), tuned_K=numeric(23), pred_K=numeric(23), row.names=NEUS.names)
+cortab<-data.frame(S_T=numeric(23), S_P=numeric(23), P_T=numeric(23), P_P=numeric(23), K_T=numeric(23), K_P=numeric(23), row.names=NEUS.names)
 
 #Calculating Correlation Coefficients using both Spearman, Pearson and Kendall methods
 for (i in 1:length(NEUS.names)){
@@ -119,10 +107,41 @@ for (i in 1:length(NEUS.names)){
   cortab[i,6]<-result$estimate
 }
 
+cortab<-cortab[2:23,]
 write.csv(cortab, file="correlations.csv")
 
+## Creating one joint table of all metrics
+skill_metrics_combined<-cbind(cortab, skill_table_biomass)
+
+#export table
+write.csv(skill_metrics_combined, file="skill_metrics_combined.csv")
+
+skill_metrics_comparison<-data.frame(Spearman=numeric(22), Pearson=numeric(22),  MEF=numeric(22),  AAE=numeric(22), RMSE=numeric(22), row.names=NEUS.names.rows)
+
+#Spearman rank correlation (non-parametric) comparison of Tuned vs Predicted
+# values > 1 show that Predicted is better than Tuned
+skill_metrics_comparison[,1]<-((1-skill_metrics_combined[,1])/(1-skill_metrics_combined[,2]))
+
+#Pearson correlation  (parametric) comparison of Tuned vs Predicted
+# values > 1 show that Predicted is better than Tuned
+skill_metrics_comparison[,2]<-((1-skill_metrics_combined[,3])/(1-skill_metrics_combined[,4]))
+
+# Modelling efficiency (MEF) comparison of Tuned vs Predicted
+# values > 1 show that Predicted is better than Tuned
+skill_metrics_comparison[,3]<-(1-skill_metrics_combined[,7])/(1-skill_metrics_combined[,8])
+
+# Average absolute error (AAE) comparison of Tuned vs Predicted
+# values > 1 show that Predicted is better than Tuned
+skill_metrics_comparison[,4]<-(skill_metrics_combined[,11])/(skill_metrics_combined[,12])
+
+# Root Mean Squared Error (RMSE)) comparison of Tuned vs Predicted
+# values > 1 show that Predicted is better than Tuned
+skill_metrics_comparison[,5]<-(skill_metrics_combined[,13])/(skill_metrics_combined[,14])
+
+#export skill metrics table 
+
 # Calculing predicted Correlation Coeff. as fraction of Tuned
-correlations<-data.frame(Pearson=numeric(23), Spearman=numeric(23), Kendall=numeric(23),  row.names=NEUS.names)
+correlations<-data.frame(Pearson=numeric(22), Spearman=numeric(22), Kendall=numeric(22),  row.names=NEUS.names)
 correlations$Pearson<-cortab$pred_P/cortab$tuned_P
 correlations$Spearman<-cortab$pred_S/cortab$tuned_S
 correlations$Kendall<-cortab$pred_K/cortab$tuned_K
@@ -132,27 +151,57 @@ corr.melt<-correlations
 corr.melt[4]<-rownames(corr.melt)
 corr.melt<-melt(corr.melt, id=c("V4"))
 
-#creating breaks
+#creating breaks - correlations
 brks<-classIntervals(corr.melt$value, n=3, style="fixed", fixedBreaks=c(-80, 0, 1, 5)) #define categories
 brks <- round(brks$brks,digits=2) #round
 catVar<-findInterval(corr.melt$value, brks, all.inside=TRUE) #assign categories
 
-corr.m<-cbind(corr.melt, catVar) #join data & spatial info
+corr.m<-cbind(corr.melt, catVar) #join data & categories
 a<-colnames(corr.m)
 a[1]<-c("Species")
 colnames(corr.m)<-a # give new name to variables
 corr.m<-subset(corr.m, Species!="Year")
 
+
+## All skill metrics melting & categories
+# melting all skill metrics
+skills.melt<-skill_metrics_comparison
+skills.melt[6]<-rownames(skills.melt)
+skills.melt<-melt(skills.melt, id=c("V6"))
+
+#creating breaks - skills
+brks<-classIntervals(skills.melt$value, n=5, style="fixed", fixedBreaks=c(0.1, 0.5, 0.9, 1.1, 1.5, 19)) #define categories
+brks <- round(brks$brks,digits=2) #round
+catVar<-findInterval(skills.melt$value, brks, all.inside=TRUE) #assign categories
+
+skills.m<-cbind(skills.melt, catVar) #join data & categories
+a<-colnames(skills.m)
+a[1]<-c("Species")
+colnames(skills.m)<-a # give new name to variables
+
+
+
+
 # Create labels from break values
 intLabels <- matrix(1:(length(brks)-1))
-for(i in 1:length(intLabels )){intLabels [i] <- paste(as.character(brks[i]),"-",as.character(brks[i+1]))}
-intLabels[1,1]<-c("Diverging")
-intLabels[2,1]<-c("T>P")
-intLabels[3,1]<-c("P>T")
-
+intLabels[1,1]<-c("T much better than P (P<50% of T)")
+intLabels[2,1]<-c("T better than P (P is10%-50% of T)")
+intLabels[3,1]<-c("T and P are similar (+/- 10%)")
+intLabels[4,1]<-c("P better than T (P is 110%-150% of T)")
+intLabels[5,1]<-c("P much better than T (P>150% of T")
 
 #making plot
-heatplot <- ggplot(corr.m, aes(variable, Species)) + geom_tile(aes(fill = factor(catVar)), colour = "white") + scale_fill_brewer(palette="Set1", name="Legend", label=intLabels) + theme( axis.text.x = element_text(angle = 0, hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_blank()) + theme(axis.title.y = element_blank()) + theme(legend.title = element_text(size=16, face="bold"))+ theme(legend.text = element_text(colour="grey20", size = 14, face = "bold"))
+heatplot <- ggplot(skills.m, aes(variable, Species)) + geom_tile(aes(fill = factor(catVar)), colour = "white") + scale_fill_brewer(palette="PRGn", name="Legend", label=intLabels) + theme( axis.text.x = element_text(angle = -45, hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_blank()) + theme(axis.title.y = element_blank()) + theme(legend.title = element_text(size=16, face="bold"))+ theme(legend.text = element_text(colour="grey20", size = 14, face = "bold"))
 
-ggsave("CorrHeatPlot.pdf", scale = 1, dpi = 400)
+ggsave("SkillsHeatPlot.pdf", scale = 1, dpi = 400)
+
+
+
+#### TAylor Diagrams & other multivariate stats
+
+library(plotrix)
+pdf(file="taylor test.pdf")
+taylor.diagram(survey_biom$YT, model_biom$YT)
+taylor.diagram(survey_biom$Haddock, model_biom$Haddock, add=TRUE, col="blue")
+dev.off()
 

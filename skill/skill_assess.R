@@ -199,9 +199,41 @@ ggsave("SkillsHeatPlot.pdf", scale = 1, dpi = 400)
 
 #### TAylor Diagrams & other multivariate stats
 
+# one versionusing plotrix package
 library(plotrix)
 pdf(file="taylor test.pdf")
-taylor.diagram(survey_biom$YT, model_biom$YT)
-taylor.diagram(survey_biom$Haddock, model_biom$Haddock, add=TRUE, col="blue")
+#taylor.diagram(survey_biom$YT, model_biom$YT)
+#taylor.diagram(survey_biom$Haddock, model_biom$Haddock, add=TRUE, col="blue")
+
+#plotting all model- observed comparisons in one plot
+taylor.diagram(subset(survey_biom, Year<2004)[,2], subset(model_biom, Year<2004)[,2], normalize=TRUE, col="orange",  main="Atlantis Modelled versus Survey data")
+taylor_colors<-rainbow(length(NEUS.names)-1)
+for (i in 3:length(NEUS.names)){
+  taylor.diagram(subset(survey_biom, Year<2004)[,i], subset(model_biom, Year<2004)[,i], add=TRUE, normalize=TRUE, col="orange")
+}
+
+for (i in 2:length(NEUS.names)){
+  taylor.diagram(subset(survey_biom, Year>=2004)[,i], subset(model_biom, Year>=2004)[,i], add=TRUE, normalize=TRUE, col="slateblue")
+}
+
+
 dev.off()
+
+## another version using openair package
+# create a joint data-frame of model and survey data
+s_names<-colnames(survey_biom)
+s_names<-paste(s_names, "S", sep="_")
+m_names<-colnames(model_biom)
+m_names<-paste(m_names, "M", sep="_")
+colnames(survey_biom)<-s_names
+colnames(model_biom)<-m_names
+survey_model<-cbind(survey_biom, model_biom)
+
+library(openair)
+
+# this function only allows single comparisons, or at most 1 observed and 2 models - Disregard
+
+TaylorDiagram(survey_model, obs="FDS_S", mod="FDS_M")
+TaylorDiagram(survey_model, obs="FDO_S", mod="FDO_M")
+TaylorDiagram(survey_model, obs=c("FDS_S", "FDO_S"), mod=c("FDS_M","FDO_M")
 

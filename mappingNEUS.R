@@ -2,6 +2,8 @@
 # By: Erik Olsen
 # Date: 21.01.2014
 
+# example
+
 
 library(rgdal)
 

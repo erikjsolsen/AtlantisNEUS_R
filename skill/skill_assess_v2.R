@@ -1,13 +1,11 @@
 ### Skill assessment
-#  - Calculating metrics
-#  - plotting biomass
+#  - Calculating metrics (correlations)
 #  - creating heat-maps
+#  - PCA analysis
 #
 # By: Erik Olsen
 # Date: 30.06.2014
-# Updated: 04.09.2014
-# Using Robs normalized data sets
-# adding catch (landings data)
+# Updated: 07.11.2014
 
 
 ### Setting up libraries
@@ -19,9 +17,11 @@ library(RColorBrewer)
 library("classInt", lib.loc="/Users/eriko/Library/R/3.0/library")
 library(grid)
 
+# Sourcing get.Ind code
+source("~/Documents/G-copy/R/get_indicators_4Erik/get_indicators_4Erik_mod.R")
 
 
-### Don' use any more
+
 ### Importing data files and species codes
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/data") 
 
@@ -43,6 +43,40 @@ landing_obs<-read.table("Observed_Landings.csv", head=TRUE, sep=",")
 # importing table of skill metrics (RMSE, AE, AAE, RI, MEF) from table provided by Rob
 skill_table_biomass<-read.csv("Skill_table_biomass.csv", row.names=1)
 skill_table_landings<-read.table("Skill_table_landings.csv", sep=";", header=TRUE, row.names=1)
+
+# IMPORT  detailed metrics tables 
+metric_biom_all<-read.csv("metric_biom_all.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_biom_74_03<-read.csv("metric_biom_74_03.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_biom_65_74<-read.csv("metric_biom_65_74.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_biom_75_84<-read.csv("metric_biom_75_84.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_biom_85_94<-read.csv("metric_biom_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_biom_95_04<-read.csv("metric_biom_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",", row.names=1)
+metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", row.names=1)
+metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", row.names=1)
+metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", row.names=1)
+metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", row.names=1)
+metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", row.names=1)
+
+#### Import full NEUS output table & adjusting numbers for weight
+Bio_m<-read.table("neus_base.csv", head=TRUE, sep=",")
+Bio_o<-read.table("Observed_Biomass.csv", head=TRUE, sep=",")
+Catch_m<-read.table("Modeled_Landings.csv", head=TRUE, sep=",")
+Catch_o<-read.table("Observed_Landings.csv", head=TRUE, sep=",")
+#import top-pred time series from EA Report data time series, ref. S. Gaichas
+## NB! Seabird biomass / numbers for model region is lacking. Only have fledgling success for a few year, but very short series. 
+# Will not include seabirds in analysis, but need to import them to keep column numbers correct 
+# need to convert No birds/seals/whales to mt
+Top_pred<-read.table("SealsBirdsWhales.csv", head=TRUE, sep=",")
+RightWhaleWeight <-60 # mt source: https://en.wikipedia.org/wiki/Right_whale
+#TernWeight <- 0.0001255 # mt, source: https://en.wikipedia.org/wiki/Common_tern
+#PuffinWeight <- 0.0005 # mt, source: http://www.canadiangeographic.ca/kids/animal-facts/atlantic_puffin.asp
+SeaWeight <- 0.1115 # mt, source: https://en.wikipedia.org/wiki/Harbor_seal
+Top_pred$WHB<-Top_pred$WHB*RightWhaleWeight
+Top_pred$PIN<-Top_pred$PIN*SeaWeight
+Top_pred<-subset(Top_pred, Year>1963)
+# only include seals and Right Whales
+Bio_o<-cbind(Bio_o, Top_pred[3:6])
 
 
 ## give real-world species names to column heads of data tables
@@ -90,43 +124,42 @@ rownames(skill_table_landings)<-NEUS.names.rows.l
 
 #########
 ### BIOMASS and LANDINGS PLOTS OVER TIME
-
-# - OLD not working 
-#for (i in 1:length(species_codes)) {
-#  biom_plot<-ggplot(survey_biom, aes(x=Year, y=species_codes[i])) + geom_line(color="red") + theme_bw()
-#  biom_plot + geom_line(data=model_biom, aes(x=Year, y=species_codes[i]), color="blue")
-#}
-
-#biom_plot<-ggplot(survey_biom, aes(x=Year, y=species_codes[i])) + geom_line(color="red") + theme_bw()
-#biom_plot + geom_line(data=model_biom, aes(x=Year, y=species_codes_used[i]), color="blue")
+# Sean Luceys code was used in MS
 
 
-## Make flattened file
-survey.melt<-melt(survey_biom, id=c("Year"))
-model.melt<-melt(model_biom, id=c("Year"))
-landings_mod.melt<-melt(landings_model, id=c("Year"))
-landings_obs.melt<-melt(landing_obs, id=c("Year"))
-
-## Faceted plots
-#BIOMASS survey/model plots 
-facet_biom_plot<-ggplot(survey.melt, aes(x=Year, y=value)) + geom_line(color="red") + theme_bw() + facet_wrap(~variable, scales = "free_y")
-
-facet_biom_plot + geom_segment(aes(x = 2004, y = 0, xend = 2013, yend = 0)) 
-facet_biom_plot +  geom_line(data=model.melt, aes(x=Year, y=value), color="blue") + geom_segment(aes(x = 2004, y = -2, xend = 2013, yend = -2)) + scale_y_continuous(breaks=NULL)+ scale_x_continuous(breaks=c(1964,2004,2013))+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-ggsave(paste("BIOMASS_model_survey_faceted.png"), scale = 1, dpi = 400)
-
-
-#LANDINGS survey/model plots 
-facet_land_plot<-ggplot(landings_obs.melt, aes(x=Year, y=value)) + geom_line(color="red") + theme_bw() + facet_wrap(~variable, scales = "free_y")
-#facet_land_plot<-ggplot(landings_obs.melt, aes(x=Year, y=value)) + geom_rect(color="gray60", fill="gray90", aes(xmin = 2004, ymin = -2, xmax = 2013, ymax = 20000)) + geom_line(color="red") + theme_bw() + facet_wrap(~variable, scales = "free_y")
-
-facet_land_plot + geom_segment(aes(x = 2004, y = 0, xend = 2013, yend = 0)) 
-facet_land_plot +  geom_line(data=landings_mod.melt, aes(x=Year, y=value), color="blue") + geom_segment(aes(x = 2004, y = -2, xend = 2013, yend = -2)) + scale_y_continuous(breaks=NULL)+ scale_x_continuous(breaks=c(1964,2004,2013))+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
-#facet_land_plot +  geom_line(data=landings_mod.melt, aes(x=Year, y=value), color="blue") + geom_rect(color="gray60", fill="gray90", aes(xmin = 2004, ymin = -2, xmax = 2013, ymax = 20000)) + scale_y_continuous(breaks=NULL)+ scale_x_continuous(breaks=c(1964,2004,2013))+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#########  ECOL INDICATORS
+# Seabirds not included in TEP of TotalBio group
+# changes made to get_indicators_4Erik_mod.R 
+### ECOLOGICAL INDICATORS for model data
+setwd("~/Documents/G-copy/R/get_indicators_4Erik")
+path=getwd()
+bzero<-1
+EcoInd_model<-get.Ind(Bio_m[1,],Catch_m[1,],bzero,path)
+EcoInd_model[24]<-1964
+names(EcoInd_model)[24]<-"Year"
+for (i in 2:nrow(Bio_m)) {
+  IndYear<-get.Ind(Bio_m[i,],Catch_m[i,],bzero,path)
+  IndYear[24]<-Bio_m$Year[i]
+  EcoInd_model<-rbind(EcoInd_model, IndYear, deparse.level = 0)
+}
 
 
-ggsave(paste("LANDINGS_model_survey_faceted.png"), scale = 1, dpi = 400)
+#### ECOLOGICAL INDICATORS for observed / landings data
+EcoInd_obs<-get.Ind.obs(Bio_o[1,],Catch_o[1,],bzero,path)
+EcoInd_obs[24]<-1964
+names(EcoInd_obs)[24]<-"Year"
+for (i in 2:nrow(Bio_o)) {
+  IndYear<-get.Ind.obs(Bio_o[i,],Catch_o[i,],bzero,path)
+  IndYear[24]<-Bio_o$Year[i]
+  EcoInd_obs<-rbind(EcoInd_obs, IndYear, deparse.level = 0)
+}
+
+setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/data") 
+EcoInd_model<-subset(as.data.frame(EcoInd_model), Year<=2014)
+save(EcoInd_model, file="EcoIndicators_modelv2.RData") 
+EcoInd_obs<-subset(as.data.frame(EcoInd_obs), Year<=2014)
+save(EcoInd_obs, file="EcoIndicators_observedv2.RData") 
+
 
 
 #######
@@ -135,70 +168,74 @@ ggsave(paste("LANDINGS_model_survey_faceted.png"), scale = 1, dpi = 400)
 # r- Spearman, Pearson
 
 # create subsets of data tuned vs predicted
-model_biom_tuned<-subset(model_biom, Year<2005)
 model_biom_pred<-subset(model_biom, Year>2004)
-survey_biom_tuned<-subset(survey_biom, Year<2005)
 survey_biom_pred<-subset(survey_biom, Year>2004)
 
 #same for landings-daa
-model_land_tuned<-subset(landings_model, Year<2005)
 model_land_pred<-subset(landings_model, Year>2004)
-obs_land_tuned<-subset(landing_obs, Year<2005)
 obs_land_pred<-subset(landing_obs, Year>2004)
 
 
 #empty data frame for correlation analyses
-cortab<-data.frame(S_T=numeric(23), S_P=numeric(23), P_T=numeric(23), P_P=numeric(23), K_T=numeric(23), K_P=numeric(23), row.names=NEUS.names)
+cortab_bb<-data.frame( S_P=numeric(23),  P_P=numeric(23),  K_P=numeric(23), row.names=NEUS.names)
 
-cortab_l<-data.frame(S_T=numeric(22), S_P=numeric(22), P_T=numeric(22), P_P=numeric(22), K_T=numeric(22), K_P=numeric(22), row.names=NEUS.names.landings)
+cortab_ll<-data.frame( S_P=numeric(22), P_P=numeric(22), K_P=numeric(22), row.names=NEUS.names.landings)
 
 # BIOMASS: Calculating Correlation Coefficients using both Spearman, Pearson and Kendall methods
 for (i in 1:length(NEUS.names)){
-  result<-cor.test(model_biom_tuned[,NEUS.names[i]], survey_biom_tuned[,NEUS.names[i]], method="spearman")
-  cortab[i,1]<-result$estimate
-  result<-cor.test(model_biom_tuned[,NEUS.names[i]], survey_biom_tuned[,NEUS.names[i]], method="pearson")
-  cortab[i,3]<-result$estimate
-  result<-cor.test(model_biom_tuned[,NEUS.names[i]], survey_biom_tuned[,NEUS.names[i]], method="kendall")
-  cortab[i,5]<-result$estimate
   result<-cor.test(model_biom_pred[,NEUS.names[i]], survey_biom_pred[,NEUS.names[i]], method="spearman")
-  cortab[i,2]<-result$estimate
+  cortab_bb[i,1]<-result$estimate
   result<-cor.test(model_biom_pred[,NEUS.names[i]], survey_biom_pred[,NEUS.names[i]], method="pearson")
-  cortab[i,4]<-result$estimate
+  cortab_bb[i,2]<-result$estimate
   result<-cor.test(model_biom_pred[,NEUS.names[i]], survey_biom_pred[,NEUS.names[i]], method="kendall")
-  cortab[i,6]<-result$estimate
+  cortab_bb[i,3]<-result$estimate
 }
 
-cortab<-cortab[2:23,]
-write.csv(cortab, file="correlations_biomass.csv")
+cortab_bb<-cortab_bb[2:23,]
+write.csv(cortab_bb, file="correlations_biomass_pred.csv")
 
 
 #LANDINGS: Calculating Correlation Coefficients using both Spearman, Pearson and Kendall methods
 for (i in 1:length(NEUS.names.landings)){
-  result<-cor.test(model_land_tuned[,NEUS.names.landings[i]], obs_land_tuned[,NEUS.names.landings[i]], method="spearman")
-  cortab_l[i,1]<-result$estimate
-  result<-cor.test(model_land_tuned[,NEUS.names.landings[i]], obs_land_tuned[,NEUS.names.landings[i]], method="pearson")
-  cortab_l[i,3]<-result$estimate
-  result<-cor.test(model_land_tuned[,NEUS.names.landings[i]], obs_land_tuned[,NEUS.names.landings[i]], method="kendall")
-  cortab_l[i,5]<-result$estimate
   result<-cor.test(model_land_pred[,NEUS.names.landings[i]], obs_land_pred[,NEUS.names.landings[i]], method="spearman")
-  cortab_l[i,2]<-result$estimate
+  cortab_ll[i,1]<-result$estimate
   result<-cor.test(model_land_pred[,NEUS.names.landings[i]], obs_land_pred[,NEUS.names.landings[i]], method="pearson")
-  cortab_l[i,4]<-result$estimate
+  cortab_ll[i,2]<-result$estimate
   result<-cor.test(model_land_pred[,NEUS.names.landings[i]], obs_land_pred[,NEUS.names.landings[i]], method="kendall")
-  cortab_l[i,6]<-result$estimate
+  cortab_ll[i,3]<-result$estimate
 }
 
-write.csv(cortab_l, file="correlations_landings.csv")
-cortab_ls<-cortab_l[2:22,]
+write.csv(cortab_ll, file="correlations_landings_pred.csv")
+cortab_ls<-cortab_ll[2:22,]
 
-## Creating one joint table of all metrics
-skill_metrics_combined<-cbind(cortab, skill_table_biomass)
-skill_metrics_combined_landings<-cbind(cortab_ls, skill_table_landings)
+
+
+### Creating joint tables of all metrics
+# predicted values
+metrics_comb_biom_pred<-cbind(cortab_bb, skill_table_biomass[,c(2,4,6,8)])
+metrics_comb_land_pred<-cbind(cortab_ls, skill_table_landings[,c(2,4,6,8)])
+# hindcast values
+metric_biom_all<-cbind(metric_biom_all[1:22,c(1,3,5,7)], correlation_biom_1964_to_2004)
+metric_biom_74_03<-cbind(metric_biom_74_03[1:22,c(1,3,5,7)], correlation_biom_1974_to_2003)
+metric_biom_65_74<-cbind(metric_biom_65_74[1:22,c(1,3,5,7)], correlation_biom_1965_to_1974)
+metric_biom_75_84<-cbind(metric_biom_75_84[1:22,c(1,3,5,7)], correlation_biom_1975_to_1984)
+metric_biom_85_94<-cbind(metric_biom_85_94[1:22,c(1,3,5,7)], correlation_biom_1985_to_1994)
+metric_biom_95_04<-cbind(metric_biom_95_04[1:22,c(1,3,5,7)], correlation_biom_1995_to_2004)
+metric_ecoind_all<-cbind(metric_ecoind_all[1:17,c(1,3,5,7)], correlation_ecoind_1964_to_2004)
+metric_ecoind_74_03<-cbind(metric_ecoind_74_03[1:17,c(1,3,5,7)], correlation_ecoind_1974_to_2003)
+metric_ecoind_65_74<-cbind(metric_ecoind_65_74[1:17,c(1,3,5,7)], correlation_ecoind_1965_to_1974)
+metric_ecoind_75_84<-cbind(metric_ecoind_75_84[1:17,c(1,3,5,7)], correlation_ecoind_1975_to_1984)
+metric_ecoind_85_94<-cbind(metric_ecoind_85_94[1:17,c(1,3,5,7)], correlation_ecoind_1985_to_1994)
+metric_ecoind_95_04<-cbind(metric_ecoind_95_04[1:17,c(1,3,5,7)], correlation_ecoind_1995_to_2004)
+
 
 #export table
 write.csv(skill_metrics_combined, file="skill_metrics_combined.csv")
 write.csv(skill_metrics_combined_landings, file="skill_metrics_combined_landings.csv")
 
+
+### COMPARE Predicted versus Hindcast
+# set up relevant data-frames
 skill_metrics_comparison<-data.frame(Spearman=numeric(22), Pearson=numeric(22),  MEF=numeric(22),  AAE=numeric(22), RMSE=numeric(22), row.names=NEUS.names.rows)
 skill_metrics_comparison_landings<-data.frame(Spearman=numeric(21), Pearson=numeric(21),  MEF=numeric(21),  AAE=numeric(21), RMSE=numeric(21), row.names=NEUS.names.rows.l)
 
@@ -226,33 +263,6 @@ skill_metrics_comparison_landings[,4]<-((1-skill_metrics_combined_landings[,11])
 # values > 1 show that Predicted is better than Tuned
 skill_metrics_comparison[,5]<-(skill_metrics_combined[,13])/(skill_metrics_combined[,14])
 skill_metrics_comparison_landings[,5]<-((1-skill_metrics_combined_landings[,13])/(1-skill_metrics_combined_landings[,14]))
-
-#export skill metrics table 
-
-# Calculing predicted Correlation Coeff. as fraction of Tuned
-#correlations<-data.frame(Pearson=numeric(22), Spearman=numeric(22), Kendall=numeric(22),  row.names=NEUS.names)
-#correlations$Pearson<-cortab$pred_P/cortab$tuned_P
-#correlations$Spearman<-cortab$pred_S/cortab$tuned_S
-#correlations$Kendall<-cortab$pred_K/cortab$tuned_K
-
-
-#### HEATMAP of skill metrics
-#### creating heatmap using ggplot
-#corr.melt<-correlations
-#corr.melt[4]<-rownames(corr.melt)
-#corr.melt<-melt(corr.melt, id=c("V4"))
-
-
-#creating breaks - correlations
-#brks<-classIntervals(corr.melt$value, n=3, style="fixed", fixedBreaks=c(-80, 0, 1, 5)) #define categories
-#brks <- round(brks$brks,digits=2) #round
-#catVar<-findInterval(corr.melt$value, brks, all.inside=TRUE) #assign categories
-
-#corr.m<-cbind(corr.melt, catVar) #join data & categories
-#a<-colnames(corr.m)
-#a[1]<-c("Species")
-#colnames(corr.m)<-a # give new name to variables
-#corr.m<-subset(corr.m, Species!="Year")
 
 
 ## All skill metrics melting & categories
@@ -306,6 +316,10 @@ ggsave("SkillsHeatPlot_biomass.pdf", scale = 1, dpi = 400)
 heatplot <- ggplot(skills.m.l, aes(variable, Species)) + geom_tile(aes(fill = factor(catVar)), colour = "white") + scale_fill_brewer(palette="PRGn", name="Legend", label=intLabels) + theme( axis.text.x = element_text(angle = -45, hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_blank()) + theme(axis.title.y = element_blank()) + theme(legend.title = element_text(size=16, face="bold"))+ theme(legend.text = element_text(colour="grey20", size = 14, face = "bold"))
 
 ggsave("SkillsHeatPlot_landings.pdf", scale = 1, dpi = 400)
+
+
+##### Heatplot using all metrics
+# See "indicator_run.R"
 
 
 

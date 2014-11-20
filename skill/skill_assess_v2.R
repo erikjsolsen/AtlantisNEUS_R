@@ -51,12 +51,13 @@ metric_biom_65_74<-read.csv("metric_biom_65_74.csv",head=TRUE, sep=",", nrows=23
 metric_biom_75_84<-read.csv("metric_biom_75_84.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 metric_biom_85_94<-read.csv("metric_biom_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 metric_biom_95_04<-read.csv("metric_biom_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", row.names=1)
+
+metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",",nrows=16,  row.names=1)
+metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", nrows=16, row.names=1)
 
 #### Import full NEUS output table & adjusting numbers for weight
 Bio_m<-read.table("neus_base.csv", head=TRUE, sep=",")

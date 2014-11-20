@@ -100,12 +100,21 @@ metric_biom_65_74<-read.csv("metric_biom_65_74.csv",head=TRUE, sep=",", nrows=23
 metric_biom_75_84<-read.csv("metric_biom_75_84.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 metric_biom_85_94<-read.csv("metric_biom_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 metric_biom_95_04<-read.csv("metric_biom_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", row.names=1)
-metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", row.names=1)
+
+metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",",nrows=16,  row.names=1)
+metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+
+metric_land_all<-read.csv("metric_land_all.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_74_03<-read.csv("metric_land_74_03.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_65_74<-read.csv("metric_land_65_74.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_75_84<-read.csv("metric_land_75_84.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_85_94<-read.csv("metric_land_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_95_04<-read.csv("metric_land_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+
 # select without seabirds
 metric_biom_all<-metric_biom_all[!row.names(metric_biom_all) %in% c("Birds"),]
 metric_biom_74_03<-metric_biom_74_03[!row.names(metric_biom_74_03) %in% c("Birds"),]
@@ -125,23 +134,322 @@ metric_ecoind_95_04<-metric_ecoind_95_04[!row.names(metric_ecoind_95_04) %in% c(
 ## 12112014 rerun - fix rows
 
 # combine with correlation tables
+metric_biom_pred<-cbind(metric_biom_all[1:22,c(2,4,6,8)], correlation_biom_2005_to_2013)
 metric_biom_all<-cbind(metric_biom_all[1:22,c(1,3,5,7)], correlation_biom_1964_to_2004)
 metric_biom_74_03<-cbind(metric_biom_74_03[1:22,c(1,3,5,7)], correlation_biom_1974_to_2003)
 metric_biom_65_74<-cbind(metric_biom_65_74[1:22,c(1,3,5,7)], correlation_biom_1965_to_1974)
 metric_biom_75_84<-cbind(metric_biom_75_84[1:22,c(1,3,5,7)], correlation_biom_1975_to_1984)
 metric_biom_85_94<-cbind(metric_biom_85_94[1:22,c(1,3,5,7)], correlation_biom_1985_to_1994)
 metric_biom_95_04<-cbind(metric_biom_95_04[1:22,c(1,3,5,7)], correlation_biom_1995_to_2004)
-metric_ecoind_all<-cbind(metric_ecoind_all[1:17,c(1,3,5,7)], correlation_ecoind_1964_to_2004)
-metric_ecoind_74_03<-cbind(metric_ecoind_74_03[1:17,c(1,3,5,7)], correlation_ecoind_1974_to_2003)
-metric_ecoind_65_74<-cbind(metric_ecoind_65_74[1:17,c(1,3,5,7)], correlation_ecoind_1965_to_1974)
-metric_ecoind_75_84<-cbind(metric_ecoind_75_84[1:17,c(1,3,5,7)], correlation_ecoind_1975_to_1984)
-metric_ecoind_85_94<-cbind(metric_ecoind_85_94[1:17,c(1,3,5,7)], correlation_ecoind_1985_to_1994)
-metric_ecoind_95_04<-cbind(metric_ecoind_95_04[1:17,c(1,3,5,7)], correlation_ecoind_1995_to_2004)
 
-####### TODO:
+metric_ecoind_pred<-cbind(metric_ecoind_all[1:16,c(2,4,6,8)], correlation_ecoind_2005_to_2013[(1:16),])
+metric_ecoind_all<-cbind(metric_ecoind_all[1:16,c(1,3,5,7)], correlation_ecoind_1964_to_2004[(1:16),])
+metric_ecoind_74_03<-cbind(metric_ecoind_74_03[1:16,c(1,3,5,7)], correlation_ecoind_1974_to_2003[(1:16),])
+metric_ecoind_65_74<-cbind(metric_ecoind_65_74[1:16,c(1,3,5,7)], correlation_ecoind_1965_to_1974[(1:16),])
+metric_ecoind_75_84<-cbind(metric_ecoind_75_84[1:16,c(1,3,5,7)], correlation_ecoind_1975_to_1984[(1:16),])
+metric_ecoind_85_94<-cbind(metric_ecoind_85_94[1:16,c(1,3,5,7)], correlation_ecoind_1985_to_1994[(1:16),])
+metric_ecoind_95_04<-cbind(metric_ecoind_95_04[1:16,c(1,3,5,7)], correlation_ecoind_1995_to_2004[(1:16),])
 
+metric_land_pred<-cbind(metric_land_all[1:21,c(2,4,6,8)], correlation_landings_2005_to_2013)
+metric_land_all<-cbind(metric_land_all[1:21,c(1,3,5,7)], correlation_landings_1964_to_2004)
+metric_land_74_03<-cbind(metric_land_74_03[1:21,c(1,3,5,7)], correlation_landings_1974_to_2003)
+metric_land_65_74<-cbind(metric_land_65_74[1:21,c(1,3,5,7)], correlation_landings_1965_to_1974)
+metric_land_75_84<-cbind(metric_land_75_84[1:21,c(1,3,5,7)], correlation_landings_1975_to_1984)
+metric_land_85_94<-cbind(metric_land_85_94[1:21,c(1,3,5,7)], correlation_landings_1985_to_1994)
+metric_land_95_04<-cbind(metric_land_95_04[1:21,c(1,3,5,7)], correlation_landings_1995_to_2004)
+
+#give new colnames that are useful for plotting
+names_hind<-c("MEF_a", "AE_a", "AAE_a", "RMSE_a", "S_a", "P_a", "K_a")
+names_pred<-c("MEF_p", "AE_p", "AAE_p", "RMSE_p", "S_p", "P_p", "K_p")
+names_noburn<-c("MEF_b", "AE_b", "AAE_b", "RMSE_b", "S_b", "P_b", "K_b")
+names_65<-c("MEF_65", "AE_65", "AAE_65", "RMSE_65", "S_65", "P_65", "K_65")
+names_75<-c("MEF_75", "AE_75", "AAE_75", "RMSE_75", "S_75", "P_75", "K_75")
+names_85<-c("MEF_85", "AE_85", "AAE_85", "RMSE_85", "S_85", "P_85", "K_85")
+names_95<-c("MEF_95", "AE_95", "AAE_95", "RMSE_95", "S_95", "P_95", "K_95")
+
+colnames(metric_biom_all)<-names_hind
+colnames(metric_biom_pred)<-names_pred
+colnames(metric_biom_74_03)<-names_noburn
+colnames(metric_biom_65_74)<-names_65
+colnames(metric_biom_75_84)<-names_75
+colnames(metric_biom_85_94)<-names_85
+colnames(metric_biom_95_04)<-names_95
+
+colnames(metric_ecoind_all)<-names_hind
+colnames(metric_ecoind_pred)<-names_pred
+colnames(metric_ecoind_74_03)<-names_noburn
+colnames(metric_ecoind_65_74)<-names_65
+colnames(metric_ecoind_75_84)<-names_75
+colnames(metric_ecoind_85_94)<-names_85
+colnames(metric_ecoind_95_04)<-names_95
+
+colnames(metric_land_all)<-names_hind
+colnames(metric_land_pred)<-names_pred
+colnames(metric_land_74_03)<-names_noburn
+colnames(metric_land_65_74)<-names_65
+colnames(metric_land_75_84)<-names_75
+colnames(metric_land_85_94)<-names_85
+colnames(metric_land_95_04)<-names_95
+
+## give real-world species names to column heads of data tables
+#biomass data
+biom_names<-rownames(metric_biom_all)
+
+for (j in 1:length(biom_names)) {
+  biom_names[j]<-as.character(species_codes$NAME[match(biom_names[j], species_codes$CODE)] )
+}
+
+rownames(metric_biom_pred)<-biom_names
+rownames(metric_biom_all)<-biom_names
+rownames(metric_biom_74_03)<-biom_names
+rownames(metric_biom_65_74)<-biom_names
+rownames(metric_biom_75_84)<-biom_names
+rownames(metric_biom_85_94)<-biom_names
+rownames(metric_biom_95_04)<-biom_names
+
+
+#landings data
+land_names<-rownames(metric_land_all)
+
+for (j in 1:length(land_names)) {
+  land_names[j]<-as.character(species_codes$NAME[match(land_names[j], species_codes$CODE)] )
+}
+
+rownames(metric_land_pred)<-land_names
+rownames(metric_land_all)<-land_names
+rownames(metric_land_74_03)<-land_names
+rownames(metric_land_65_74)<-land_names
+rownames(metric_land_75_84)<-land_names
+rownames(metric_land_85_94)<-land_names
+rownames(metric_land_95_04)<-land_names
+
+
+
+# New DATASETs: 
+  # one for each metric
+MEF<-rbind(cbind(metric_biom_all[1], metric_biom_pred[1], metric_biom_74_03[1], metric_biom_65_74[1], metric_biom_75_84[1], metric_biom_85_94[1], metric_biom_95_04[1]), cbind(metric_ecoind_all[1], metric_ecoind_pred[1], metric_ecoind_74_03[1], metric_ecoind_65_74[1], metric_ecoind_75_84[1], metric_ecoind_85_94[1], metric_ecoind_95_04[1]), cbind(metric_land_all[1], metric_land_pred[1], metric_land_74_03[1], metric_land_65_74[1], metric_land_75_84[1], metric_land_85_94[1], metric_land_95_04[1]))
+
+MEF_b<-cbind(metric_biom_all[1], metric_biom_pred[1], metric_biom_74_03[1], metric_biom_65_74[1], metric_biom_75_84[1], metric_biom_85_94[1], metric_biom_95_04[1])
+MEF_b[8]<-rownames(MEF_b)
+
+MEF_e<-cbind(metric_ecoind_all[1], metric_ecoind_pred[1], metric_ecoind_74_03[1], metric_ecoind_65_74[1], metric_ecoind_75_84[1], metric_ecoind_85_94[1], metric_ecoind_95_04[1])
+MEF_e[8]<-rownames(MEF_e)
+
+MEF_l<-cbind(metric_land_all[1], metric_land_pred[1], metric_land_74_03[1], metric_land_65_74[1], metric_land_75_84[1], metric_land_85_94[1], metric_land_95_04[1])
+MEF_l[8]<-rownames(MEF_l)
+
+
+
+AE<-rbind(cbind(metric_biom_all[2], metric_biom_pred[2], metric_biom_74_03[2], metric_biom_65_74[2], metric_biom_75_84[2], metric_biom_85_94[2], metric_biom_95_04[2]), cbind(metric_ecoind_all[2], metric_ecoind_pred[2], metric_ecoind_74_03[2], metric_ecoind_65_74[2], metric_ecoind_75_84[2], metric_ecoind_85_94[2], metric_ecoind_95_04[2]), cbind(metric_land_all[2], metric_land_pred[2], metric_land_74_03[2], metric_land_65_74[2], metric_land_75_84[2], metric_land_85_94[2], metric_land_95_04[2]))
+
+AE_b<-cbind(metric_biom_all[2], metric_biom_pred[2], metric_biom_74_03[2], metric_biom_65_74[2], metric_biom_75_84[2], metric_biom_85_94[2], metric_biom_95_04[2])
+AE_b[8]<-rownames(AE_b)
+
+AE_e<-cbind(metric_ecoind_all[2], metric_ecoind_pred[2], metric_ecoind_74_03[2], metric_ecoind_65_74[2], metric_ecoind_75_84[2], metric_ecoind_85_94[2], metric_ecoind_95_04[2])
+AE_e[8]<-rownames(AE_e)
+
+AE_l<-cbind(metric_land_all[2], metric_land_pred[2], metric_land_74_03[2], metric_land_65_74[2], metric_land_75_84[2], metric_land_85_94[2], metric_land_95_04[2])
+AE_l[8]<-rownames(AE_l)
+
+  
+AAE<-rbind(cbind(metric_biom_all[3], metric_biom_pred[3], metric_biom_74_03[3], metric_biom_65_74[3], metric_biom_75_84[3], metric_biom_85_94[3], metric_biom_95_04[3]), cbind(metric_ecoind_all[3], metric_ecoind_pred[3], metric_ecoind_74_03[3], metric_ecoind_65_74[3], metric_ecoind_75_84[3], metric_ecoind_85_94[3], metric_ecoind_95_04[3]), cbind(metric_land_all[3], metric_land_pred[3], metric_land_74_03[3], metric_land_65_74[3], metric_land_75_84[3], metric_land_85_94[3], metric_land_95_04[3]))
+
+AAE_b<-cbind(metric_biom_all[3], metric_biom_pred[3], metric_biom_74_03[3], metric_biom_65_74[3], metric_biom_75_84[3], metric_biom_85_94[3], metric_biom_95_04[3])
+AAE_b[8]<-rownames(AAE_b)
+
+AAE_e<-cbind(metric_ecoind_all[3], metric_ecoind_pred[3], metric_ecoind_74_03[3], metric_ecoind_65_74[3], metric_ecoind_75_84[3], metric_ecoind_85_94[3], metric_ecoind_95_04[3])
+AAE_e[8]<-rownames(AAE_e)
+
+AAE_l<-cbind(metric_land_all[3], metric_land_pred[3], metric_land_74_03[3], metric_land_65_74[3], metric_land_75_84[3], metric_land_85_94[3], metric_land_95_04[3])
+AAE_l[8]<-rownames(AAE_l)
+
+
+RMSE<-rbind(cbind(metric_biom_all[4], metric_biom_pred[4], metric_biom_74_03[4], metric_biom_65_74[4], metric_biom_75_84[4], metric_biom_85_94[4], metric_biom_95_04[4]), cbind(metric_ecoind_all[4], metric_ecoind_pred[4], metric_ecoind_74_03[4], metric_ecoind_65_74[4], metric_ecoind_75_84[4], metric_ecoind_85_94[4], metric_ecoind_95_04[4]), cbind(metric_land_all[4], metric_land_pred[4], metric_land_74_03[4], metric_land_65_74[4], metric_land_75_84[4], metric_land_85_94[4], metric_land_95_04[4]))
+
+RMSE_b<-cbind(metric_biom_all[4], metric_biom_pred[4], metric_biom_74_03[4], metric_biom_65_74[4], metric_biom_75_84[4], metric_biom_85_94[4], metric_biom_95_04[4])
+RMSE_b[8]<-rownames(RMSE_b)
+
+RMSE_e<-cbind(metric_ecoind_all[4], metric_ecoind_pred[4], metric_ecoind_74_03[4], metric_ecoind_65_74[4], metric_ecoind_75_84[4], metric_ecoind_85_94[4], metric_ecoind_95_04[4])
+RMSE_e[8]<-rownames(RMSE_e)
+
+RMSE_l<-cbind(metric_land_all[4], metric_land_pred[4], metric_land_74_03[4], metric_land_65_74[4], metric_land_75_84[4], metric_land_85_94[4], metric_land_95_04[4])
+RMSE_l[8]<-rownames(RMSE_l)
+
+
+S_corr<-rbind(cbind(metric_biom_all[5], metric_biom_pred[5], metric_biom_74_03[5], metric_biom_65_74[5], metric_biom_75_84[5], metric_biom_85_94[5], metric_biom_95_04[5]), cbind(metric_ecoind_all[5], metric_ecoind_pred[5], metric_ecoind_74_03[5], metric_ecoind_65_74[5], metric_ecoind_75_84[5], metric_ecoind_85_94[5], metric_ecoind_95_04[5]), cbind(metric_land_all[5], metric_land_pred[5], metric_land_74_03[5], metric_land_65_74[5], metric_land_75_84[5], metric_land_85_94[5], metric_land_95_04[5]))
+
+S_b<-cbind(metric_biom_all[5], metric_biom_pred[5], metric_biom_74_03[5], metric_biom_65_74[5], metric_biom_75_84[5], metric_biom_85_94[5], metric_biom_95_04[5])
+S_b[8]<-rownames(S_b)
+
+S_e<-cbind(metric_ecoind_all[5], metric_ecoind_pred[5], metric_ecoind_74_03[5], metric_ecoind_65_74[5], metric_ecoind_75_84[5], metric_ecoind_85_94[5], metric_ecoind_95_04[5])
+S_e[8]<-rownames(S_e)
+
+S_l<-cbind(metric_land_all[5], metric_land_pred[5], metric_land_74_03[5], metric_land_65_74[5], metric_land_75_84[5], metric_land_85_94[5], metric_land_95_04[5])
+S_l[8]<-rownames(S_l)
+
+
+P_corr<-rbind(cbind(metric_biom_all[6], metric_biom_pred[6], metric_biom_74_03[6], metric_biom_65_74[6], metric_biom_75_84[6], metric_biom_85_94[6], metric_biom_95_04[6]), cbind(metric_ecoind_all[6], metric_ecoind_pred[6], metric_ecoind_74_03[6], metric_ecoind_65_74[6], metric_ecoind_75_84[6], metric_ecoind_85_94[6], metric_ecoind_95_04[6]), cbind(metric_land_all[6], metric_land_pred[6], metric_land_74_03[6], metric_land_65_74[6], metric_land_75_84[6], metric_land_85_94[6], metric_land_95_04[6]))
+
+K_corr<-rbind(cbind(metric_biom_all[7], metric_biom_pred[7], metric_biom_74_03[7], metric_biom_65_74[7], metric_biom_75_84[7], metric_biom_85_94[7], metric_biom_95_04[7]), cbind(metric_ecoind_all[7], metric_ecoind_pred[7], metric_ecoind_74_03[7], metric_ecoind_65_74[7], metric_ecoind_75_84[7], metric_ecoind_85_94[7], metric_ecoind_95_04[7]), cbind(metric_land_all[7], metric_land_pred[7], metric_land_74_03[7], metric_land_65_74[7], metric_land_75_84[7], metric_land_85_94[7], metric_land_95_04[7]))
+
+ 
+
+MEF[8]<-rownames(MEF)  
+MEF_e[8]<-rownames(MEF_e)
+  
+### Plot each metric along line
+#colorblind friendly palettes
+cbPalette1 <- c("#000000", "#D55E00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",  "#E69F00", "#CC79A7")
+cbPalette2 <- c("#999999", "#D55E00",  "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#E69F00", "#CC79A7")
+
+# MEF plots
+#one for each data-type
+MEFb_melt<-melt(MEF_b, id=c("V8"))
+ggplot(MEFb_melt, aes(variable, value)) +  geom_bar(stat = "identity", aes(fill=variable)) + theme_bw() + facet_wrap(~ V8)+ theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("MEF_biomass.pdf")
+
+MEFe_melt<-melt(MEF_e, id=c("V8"))
+ggplot(MEFe_melt, aes(variable, value)) +  geom_bar(stat = "identity", aes(fill=variable)) + theme_bw()  + facet_wrap(~ V8)+ theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))+ scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("MEF_econind.pdf")
+
+MEFl_melt<-melt(MEF_l, id=c("V8"))
+ggplot(MEFl_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity") + theme_bw()   + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("MEF_landings.pdf")
+
+# AE plots
+M_melt<-melt(AE_b, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw()  + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-3, 3))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("AE_biomass.pdf")
+
+M_melt<-melt(AE_e, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")   + theme_bw()  + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1)) + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco.Indicators - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("AE_ecoind.pdf")
+
+M_melt<-melt(AE_l, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")   + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("AE_landings.pdf")
+
+#AAE plots
+M_melt<-melt(AAE_b, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("AAE_biomass.pdf")
+
+M_melt<-melt(AAE_e, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("AAE_ecoind.pdf")
+
+M_melt<-melt(AAE_l, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("AAE_land.pdf")
+
+#RMSE plots
+M_melt<-melt(RMSE_b, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("RMSE_biom.pdf")
+
+M_melt<-melt(RMSE_e, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("RMSE_ecoind.pdf")
+
+M_melt<-melt(RMSE_l, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("RMSE_land.pdf")
+
+# Correlation (Spearman rank chosen as all correlations show the same c.f. PCA analysis)
+M_melt<-melt(S_b, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("S_corr_biom.pdf")
+
+M_melt<-melt(S_e, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("S_corr_ecoind.pdf")
+
+M_melt<-melt(S_l, id=c("V8"))
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
+ggsave("S_corr_landings.pdf")
+
+
+# one for each data-type (biomasss, landings, eco-ind.)
+biomass<-cbind(metric_biom_pred, metric_biom_all, metric_biom_74_03, metric_biom_65_74, metric_biom_75_84, metric_biom_85_94, metric_biom_95_04)
+
+ecoind<-cbind(metric_ecoind_pred, metric_ecoind_all, metric_ecoind_74_03, metric_ecoind_65_74, metric_ecoind_75_84, metric_ecoind_85_94, metric_ecoind_95_04)
+
+landings<-cbind(metric_land_pred, metric_land_all, metric_land_74_03, metric_land_65_74, metric_land_75_84, metric_land_85_94, metric_land_95_04)
 
 # PCA analysis of metrics
+biomass_s<-biomass[complete.cases(biomass),]
+biom_PC<-prcomp(biomass_s, scale=TRUE)
+
+ecoind_s<-ecoind[complete.cases(ecoind),]
+ecoind_PC<-prcomp(ecoind_s, scale=TRUE)
+
+landings_s<-landings[complete.cases(landings),]
+landings_PC<-prcomp(landings_s, scale=TRUE)
+
+#creating loadings plots with arrows
+# null_PC<-data.frame(x=numeric(49), y=numeric(49))
+
+BIO_PC1_2<-data.frame(biom_PC$rotation[,1:2])
+ECO_PC1_2<-data.frame(ecoind_PC$rotation[,1:2])
+LAN_PC1_2<-data.frame(landings_PC$rotation[,1:2])
+
+# set a color scheme
+PC_colors<-brewer.pal(5, "Set1")
+
+#PCA loadings plot of BIOMASS
+PCplot1<-ggplot(BIO_PC1_2)
+
+PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("MEF", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("MEF", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[1])
+PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("AE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("AE", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[2])
+PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("AAE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("AAE", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[3])
+PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("RMSE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("RMSE", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[4])
+PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("P_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("P_", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("S_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("S_", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("K_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("K_", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
 
 
-# make bar plots for each indicator
+PCplot1 <- PCplot1 + geom_segment(data=BIO_PC1_2, linetype=2, color="gray70", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="gray60") +  ggtitle("Biomass, loadings plot") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.3, 0.33), ylim = c(-0.3, 0.33) )
+PCplot1
+ggsave("PCA_biom_all.pdf", width=11, height=11)
+
+#PCA loadings plot of ECOIND
+PCplot2<-ggplot(ECO_PC1_2)
+
+PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep("MEF", rownames(ECO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(ECO_PC1_2[grep("MEF", rownames(ECO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[1])
+PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep("AE", rownames(ECO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(ECO_PC1_2[grep("AE", rownames(ECO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[2])
+PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep("AAE", rownames(ECO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(ECO_PC1_2[grep("AAE", rownames(ECO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[3])
+PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep("RMSE", rownames(ECO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(ECO_PC1_2[grep("RMSE", rownames(ECO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[4])
+PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep("P_", rownames(ECO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(ECO_PC1_2[grep("P_", rownames(ECO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep("S_", rownames(ECO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(ECO_PC1_2[grep("S_", rownames(ECO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep("K_", rownames(ECO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(ECO_PC1_2[grep("K_", rownames(ECO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+
+
+
+PCplot2 <- PCplot2 + geom_segment(data=ECO_PC1_2,linetype=2, color="gray70", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Ecological indicators, loadings plot") + theme(plot.title = element_text(size = rel(2), colour = "midnightblue")) + coord_cartesian(xlim = c(-0.225, 0.225), ylim = c(-0.3, 0.15) )
+ggsave("PCA_ecoind_all.pdf", width=11, height=11)
+
+#PCA loadings plot of LANDINGS
+PCplot3<-ggplot(LAN_PC1_2)
+
+PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep("MEF", rownames(LAN_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(LAN_PC1_2[grep("MEF", rownames(LAN_PC1_2)),])), size = 4, vjust=1, color=PC_colors[1])
+PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep("AE", rownames(LAN_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(LAN_PC1_2[grep("AE", rownames(LAN_PC1_2)),])), size = 4, vjust=1, color=PC_colors[2])
+PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep("AAE", rownames(LAN_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(LAN_PC1_2[grep("AAE", rownames(LAN_PC1_2)),])), size = 4, vjust=1, color=PC_colors[3])
+PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep("RMSE", rownames(LAN_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(LAN_PC1_2[grep("RMSE", rownames(LAN_PC1_2)),])), size = 4, vjust=1, color=PC_colors[4])
+PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep("P_", rownames(LAN_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(LAN_PC1_2[grep("P_", rownames(LAN_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep("S_", rownames(LAN_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(LAN_PC1_2[grep("S_", rownames(LAN_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep("K_", rownames(LAN_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(LAN_PC1_2[grep("K_", rownames(LAN_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
+
+
+
+PCplot3 <- PCplot3 + geom_segment(data=LAN_PC1_2, linetype=2, color="gray70", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Landings, loadings plot") + theme(plot.title = element_text(size = rel(2), colour = "midnightblue")) + coord_cartesian(xlim = c(-0.3, 0.3), ylim = c(-0.3, 0.3) )
+ggsave("PCA_land_all.pdf", width=11, height=11)
+
+  # TODO:
+    # calculate "center of gravity" for each metric which can be plotted. (i.e. average position)
+
+
+#need to source multiplot function
+multiplot(PCplot1, PCplot2, PCplot3, cols=2)
+#save manually using Export button on Plot-Viewing Window
+
+

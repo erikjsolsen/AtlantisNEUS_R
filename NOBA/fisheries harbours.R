@@ -2,7 +2,7 @@
 # analysis of Norwegian fisheries harbours
 # By: Erik Olsen
 # Created: 4.11.2014
-# Updated: 4.11.2014
+# Updated: 5.12.2014
 
 library(lattice) #load lattice library
 library(RColorBrewer)
@@ -11,7 +11,17 @@ library(ggplot2)
 
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/fiskeri")
 
-harbours<-read.csv("fishing by kommune 2013_utf.csv", row.names=1)
+harbours<-read.csv("fiskerianlegg.csv")
+postcodes<-read.table("postnummer.csv", header=TRUE, sep="\t")
+
+#add LAT and LON to the harbours file
+harbours$LAT <-0
+harbours$LON <-0
+
+for (i in 1 : length(harbours$POSTCODE)){ 
+  harbours$LAT[i] <- postcodes$LAT[grep(harbours$POSTCODE[i], postcodes$POSTNR)]
+  harbours$LON[i] <- postcodes$LON[grep(harbours$POSTCODE[i], postcodes$POSTNR)]
+  }
 
 ## Barplot of harbours by landings
 harbours.bar<-subset(harbours, Landings>1000) 

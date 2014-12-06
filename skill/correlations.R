@@ -3,7 +3,7 @@
 # By: Erik Olsen
 # 5/11/2014
 
-# must import data files using indicators_run.R script
+# must import data files using skill_assess_v2.R script
 
 # more detailed subsets for 74-03 (No_Burnin), 65-74, 75-84, 85-94, 95-04
 Y1<-c(1964, 1974, 1965, 1975, 1985, 1995, 2005)
@@ -451,5 +451,211 @@ ggsave("PCA_land_all.pdf", width=11, height=11)
 #need to source multiplot function
 multiplot(PCplot1, PCplot2, PCplot3, cols=2)
 #save manually using Export button on Plot-Viewing Window
+
+
+#### Tally when each time-series performs best 
+# eg. comparing the Full Hindcast w No Burnin w Predicted, w decades
+# use 'biomass', 'landings' and 'ecoind' as input data and extract to new data.frame
+
+tabel_metric_comp<-data.frame(NoBurnin=numeric(15), Forecast=numeric(15), Forecast_NoBurn=numeric(15), D1965_74=numeric(15), D1975_84=numeric(15), D1985_94=numeric(15), D1995_04=numeric(15), row.names=c("b_MEF", "b_AE", "b_AAE", "b_RMSE", "b_SC", "l_MEF", "l_AE", "l_AAE", "l_RMSE", "l_SC", "e_MEF",   "e_AE",   "e_AAE",   "e_RMSE",   "e_SC"))
+
+#MEF_b
+i<-c(1)
+j<-c(1)
+tabel_metric_comp[j,1]<- nrow(subset(biomass, biomass[i+14] > biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,2]<- nrow(subset(biomass, biomass[i] > biomass[i+7] ))/nrow(biomass)
+tabel_metric_comp[j,3]<- nrow(subset(biomass, biomass[i] > biomass[i+14]))/nrow(biomass)
+tabel_metric_comp[j,4]<- nrow(subset(biomass, biomass[i+21] > biomass[i+7]))/nrow(biomass)
+tabel_metric_comp[j,5]<- nrow(subset(biomass, biomass[i+28] > biomass[i+7]))/nrow(biomass)  
+tabel_metric_comp[j,6]<- nrow(subset(biomass, biomass[i+35] > biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,7]<- nrow(subset(biomass, biomass[i+42] > biomass[i+7]))/nrow(biomass) 
+
+#AE_b
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(biomass, abs(biomass[i+14]) < abs(biomass[i+7])))/nrow(biomass) 
+tabel_metric_comp[j,2]<- nrow(subset(biomass, abs(biomass[i]) < abs(biomass[i+7]) ))/nrow(biomass)
+tabel_metric_comp[j,3]<- nrow(subset(biomass, abs(biomass[i]) <  abs(biomass[i+14])))/ nrow(biomass)
+tabel_metric_comp[j,4]<- nrow(subset(biomass, abs(biomass[i+21]) < abs(biomass[i+7])))/nrow(biomass)
+tabel_metric_comp[j,5]<- nrow(subset(biomass, abs(biomass[i+28]) < abs(biomass[i+7])))/nrow(biomass)  
+tabel_metric_comp[j,6]<- nrow(subset(biomass, abs(biomass[i+35]) < abs(biomass[i+7])))/nrow(biomass) 
+tabel_metric_comp[j,7]<- nrow(subset(biomass, abs(biomass[i+42]) < abs(biomass[i+7])))/nrow(biomass) 
+
+#AAE_b
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(biomass, biomass[i+14] < biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,2]<- nrow(subset(biomass, biomass[i] < biomass[i+7] ))/nrow(biomass)
+tabel_metric_comp[j,3]<- nrow(subset(biomass, biomass[i] < biomass[i+14]))/nrow(biomass)
+tabel_metric_comp[j,4]<- nrow(subset(biomass, biomass[i+21] < biomass[i+7]))/nrow(biomass)
+tabel_metric_comp[j,5]<- nrow(subset(biomass, biomass[i+28] < biomass[i+7]))/nrow(biomass)  
+tabel_metric_comp[j,6]<- nrow(subset(biomass, biomass[i+35] < biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,7]<- nrow(subset(biomass, biomass[i+42] < biomass[i+7]))/nrow(biomass) 
+
+#RMSE_b
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(biomass, biomass[i+14] < biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,2]<- nrow(subset(biomass, biomass[i] < biomass[i+7] ))/nrow(biomass)
+tabel_metric_comp[j,3]<- nrow(subset(biomass, biomass[i] < biomass[i+14]))/nrow(biomass)
+tabel_metric_comp[j,4]<- nrow(subset(biomass, biomass[i+21] < biomass[i+7]))/nrow(biomass)
+tabel_metric_comp[j,5]<- nrow(subset(biomass, biomass[i+28] < biomass[i+7]))/nrow(biomass)  
+tabel_metric_comp[j,6]<- nrow(subset(biomass, biomass[i+35] < biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,7]<- nrow(subset(biomass, biomass[i+42] < biomass[i+7]))/nrow(biomass) 
+
+#SCorr_b
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(biomass, biomass[i+14] > biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,2]<- nrow(subset(biomass, biomass[i] > biomass[i+7] ))/nrow(biomass)
+tabel_metric_comp[j,3]<- nrow(subset(biomass, biomass[i] > biomass[i+14]))/nrow(biomass)
+tabel_metric_comp[j,4]<- nrow(subset(biomass, biomass[i+21] > biomass[i+7]))/nrow(biomass)
+tabel_metric_comp[j,5]<- nrow(subset(biomass, biomass[i+28] > biomass[i+7]))/nrow(biomass)  
+tabel_metric_comp[j,6]<- nrow(subset(biomass, biomass[i+35] > biomass[i+7]))/nrow(biomass) 
+tabel_metric_comp[j,7]<- nrow(subset(biomass, biomass[i+42] > biomass[i+7]))/nrow(biomass) 
+
+# landings data
+#MEF_l
+i<-c(1)
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(landings, landings[i+14] > landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,2]<- nrow(subset(landings, landings[i] > landings[i+7] ))/nrow(landings)
+tabel_metric_comp[j,3]<- nrow(subset(landings, landings[i] > landings[i+14]))/nrow(landings)
+tabel_metric_comp[j,4]<- nrow(subset(landings, landings[i+21] > landings[i+7]))/nrow(landings)
+tabel_metric_comp[j,5]<- nrow(subset(landings, landings[i+28] > landings[i+7]))/nrow(landings)  
+tabel_metric_comp[j,6]<- nrow(subset(landings, landings[i+35] > landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,7]<- nrow(subset(landings, landings[i+42] > landings[i+7]))/nrow(landings) 
+
+#AE_l
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(landings, abs(landings[i+14]) < abs(landings[i+7])))/nrow(landings) 
+tabel_metric_comp[j,2]<- nrow(subset(landings, abs(landings[i]) < abs(landings[i+7]) ))/nrow(landings)
+tabel_metric_comp[j,3]<- nrow(subset(landings, abs(landings[i]) < abs(landings[i+14])))/ nrow(landings)
+tabel_metric_comp[j,4]<- nrow(subset(landings, abs(landings[i+21]) < abs(landings[i+7])))/nrow(landings)
+tabel_metric_comp[j,5]<- nrow(subset(landings, abs(landings[i+28]) < abs(landings[i+7])))/nrow(landings)  
+tabel_metric_comp[j,6]<- nrow(subset(landings, abs(landings[i+35]) < abs(landings[i+7])))/nrow(landings) 
+tabel_metric_comp[j,7]<- nrow(subset(landings, abs(landings[i+42]) < abs(landings[i+7])))/nrow(landings) 
+
+#AAE_l
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(landings, landings[i+14] < landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,2]<- nrow(subset(landings, landings[i] < landings[i+7] ))/nrow(landings)
+tabel_metric_comp[j,3]<- nrow(subset(landings, landings[i] < landings[i+14]))/nrow(landings)
+tabel_metric_comp[j,4]<- nrow(subset(landings, landings[i+21] < landings[i+7]))/nrow(landings)
+tabel_metric_comp[j,5]<- nrow(subset(landings, landings[i+28] < landings[i+7]))/nrow(landings)  
+tabel_metric_comp[j,6]<- nrow(subset(landings, landings[i+35] < landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,7]<- nrow(subset(landings, landings[i+42] < landings[i+7]))/nrow(landings) 
+
+#RMSE_l
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(landings, landings[i+14] < landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,2]<- nrow(subset(landings, landings[i] < landings[i+7] ))/nrow(landings)
+tabel_metric_comp[j,3]<- nrow(subset(landings, landings[i] < landings[i+14]))/nrow(landings)
+tabel_metric_comp[j,4]<- nrow(subset(landings, landings[i+21] < landings[i+7]))/nrow(landings)
+tabel_metric_comp[j,5]<- nrow(subset(landings, landings[i+28] < landings[i+7]))/nrow(landings)  
+tabel_metric_comp[j,6]<- nrow(subset(landings, landings[i+35] < landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,7]<- nrow(subset(landings, landings[i+42] < landings[i+7]))/nrow(landings) 
+
+#SCorr_l
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(landings, landings[i+14] > landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,2]<- nrow(subset(landings, landings[i] > landings[i+7] ))/nrow(landings)
+tabel_metric_comp[j,3]<- nrow(subset(landings, landings[i] > landings[i+14]))/nrow(landings)
+tabel_metric_comp[j,4]<- nrow(subset(landings, landings[i+21] > landings[i+7]))/nrow(landings)
+tabel_metric_comp[j,5]<- nrow(subset(landings, landings[i+28] > landings[i+7]))/nrow(landings)  
+tabel_metric_comp[j,6]<- nrow(subset(landings, landings[i+35] > landings[i+7]))/nrow(landings) 
+tabel_metric_comp[j,7]<- nrow(subset(landings, landings[i+42] > landings[i+7]))/nrow(landings) 
+
+# ecoindicators
+#MEF_i
+i<-c(1)
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(ecoind, ecoind[i+14] > ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,2]<- nrow(subset(ecoind, ecoind[i] > ecoind[i+7] ))/nrow(ecoind)
+tabel_metric_comp[j,3]<- nrow(subset(ecoind, ecoind[i] > ecoind[i+14]))/nrow(ecoind)
+tabel_metric_comp[j,4]<- nrow(subset(ecoind, ecoind[i+21] > ecoind[i+7]))/nrow(ecoind)
+tabel_metric_comp[j,5]<- nrow(subset(ecoind, ecoind[i+28] > ecoind[i+7]))/nrow(ecoind)  
+tabel_metric_comp[j,6]<- nrow(subset(ecoind, ecoind[i+35] > ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,7]<- nrow(subset(ecoind, ecoind[i+42] > ecoind[i+7]))/nrow(ecoind) 
+
+#AE_i
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(ecoind, abs(ecoind[i+14]) < abs(ecoind[i+7])))/nrow(ecoind) 
+tabel_metric_comp[j,2]<- nrow(subset(ecoind, abs(ecoind[i]) < abs(ecoind[i+7]) ))/nrow(ecoind)
+tabel_metric_comp[j,3]<- nrow(subset(ecoind, abs(ecoind[i]) < abs(ecoind[i+14])))/ nrow(ecoind)
+tabel_metric_comp[j,4]<- nrow(subset(ecoind, abs(ecoind[i+21]) < abs(ecoind[i+7])))/nrow(ecoind)
+tabel_metric_comp[j,5]<- nrow(subset(ecoind, abs(ecoind[i+28]) < abs(ecoind[i+7])))/nrow(ecoind)  
+tabel_metric_comp[j,6]<- nrow(subset(ecoind, abs(ecoind[i+35]) < abs(ecoind[i+7])))/nrow(ecoind) 
+tabel_metric_comp[j,7]<- nrow(subset(ecoind, abs(ecoind[i+42]) < abs(ecoind[i+7])))/nrow(ecoind) 
+
+#AAE_i
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(ecoind, ecoind[i+14] < ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,2]<- nrow(subset(ecoind, ecoind[i] < ecoind[i+7] ))/nrow(ecoind)
+tabel_metric_comp[j,3]<- nrow(subset(ecoind, ecoind[i] < ecoind[i+14]))/nrow(ecoind)
+tabel_metric_comp[j,4]<- nrow(subset(ecoind, ecoind[i+21] < ecoind[i+7]))/nrow(ecoind)
+tabel_metric_comp[j,5]<- nrow(subset(ecoind, ecoind[i+28] < ecoind[i+7]))/nrow(ecoind)  
+tabel_metric_comp[j,6]<- nrow(subset(ecoind, ecoind[i+35] < ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,7]<- nrow(subset(ecoind, ecoind[i+42] < ecoind[i+7]))/nrow(ecoind) 
+
+#RMSE_i
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(ecoind, ecoind[i+14] < ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,2]<- nrow(subset(ecoind, ecoind[i] < ecoind[i+7] ))/nrow(ecoind)
+tabel_metric_comp[j,3]<- nrow(subset(ecoind, ecoind[i] < ecoind[i+14]))/nrow(ecoind)
+tabel_metric_comp[j,4]<- nrow(subset(ecoind, ecoind[i+21] < ecoind[i+7]))/nrow(ecoind)
+tabel_metric_comp[j,5]<- nrow(subset(ecoind, ecoind[i+28] < ecoind[i+7]))/nrow(ecoind)  
+tabel_metric_comp[j,6]<- nrow(subset(ecoind, ecoind[i+35] < ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,7]<- nrow(subset(ecoind, ecoind[i+42] < ecoind[i+7]))/nrow(ecoind) 
+
+#SCorr_i
+i<-i+1
+j<-j+1
+tabel_metric_comp[j,1]<- nrow(subset(ecoind, ecoind[i+14] > ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,2]<- nrow(subset(ecoind, ecoind[i] > ecoind[i+7] ))/nrow(ecoind)
+tabel_metric_comp[j,3]<- nrow(subset(ecoind, ecoind[i] >  ecoind[i+14]))/nrow(ecoind)
+tabel_metric_comp[j,4]<- nrow(subset(ecoind, ecoind[i+21] > ecoind[i+7]))/nrow(ecoind)
+tabel_metric_comp[j,5]<- nrow(subset(ecoind, ecoind[i+28] > ecoind[i+7]))/nrow(ecoind)  
+tabel_metric_comp[j,6]<- nrow(subset(ecoind, ecoind[i+35] > ecoind[i+7]))/nrow(ecoind) 
+tabel_metric_comp[j,7]<- nrow(subset(ecoind, ecoind[i+42] > ecoind[i+7]))/nrow(ecoind) 
+
+
+# Heatmap / tabel of tabel_metric_comp 
+tabel_metric_comp$Metric <- rownames(tabel_metric_comp)
+TMC<-cbind(tabel_metric_comp[8], tabel_metric_comp[1], tabel_metric_comp[4], tabel_metric_comp[5], tabel_metric_comp[6], tabel_metric_comp[7], tabel_metric_comp[2], tabel_metric_comp[3])
+tabel_metric_comp_melt <- melt(TMC, id=c("Metric"))
+
+#df1 <- with(tabel_metric_comp_melt, factor(Metric, levels = rev(levels(Metric))))
+
+
+#creating breaks
+brks<-classIntervals(tabel_metric_comp_melt$value, n=4, style="fixed", fixedBreaks=c(0, 0.25, 0.5, 0.75, 1.0)) #define categories
+brks <- round(brks$brks,digits=2) #round
+catVar<-findInterval(tabel_metric_comp_melt$value, brks, all.inside=TRUE) #assign categories
+
+tabel_metric_comp_melt<-cbind(tabel_metric_comp_melt, catVar) #join data & categories
+
+# Create labels from break values
+intLabels <- matrix(1:(length(brks)-1))
+intLabels[1,1]<-c("0-25%")
+intLabels[2,1]<-c("25-50%")
+intLabels[3,1]<-c("50-75%")
+intLabels[4,1]<-c("75-100%")
+#intLabels[5,1]<-c("80-100%")
+
+# make heatplot
+metricplot <- ggplot(tabel_metric_comp_melt, aes(variable, Metric)) + geom_tile(aes(fill = factor(catVar)), colour = "white") + scale_fill_brewer(palette="Blues", name="% components", label=intLabels) + geom_text(aes(label = round(value, 2), size= 16), show_guide  = F) + theme( axis.text.x = element_text(angle = -45, hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_blank()) + theme(axis.title.y = element_blank()) + theme(legend.title = element_text(size=16, face="bold"))+ theme(legend.text = element_text(colour="grey20", size = 14, face = "bold")) + ggtitle("Percentage of model components with higher performance \n metrics in select time periods vs. full hindcast\n ")+ theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))
+
+metricplot + scale_x_discrete(breaks=c("NoBurnin", "D1965_74", "D1975_84", "D1985_94", "D1995_04", "Forecast", "Forecast_NoBurn"), labels=c("No Burnin", "1965-1974", "1975-1984", "1985-1994", "1995-2004", "Forecast", "Forecast vs. No Burnin")) 
+
+ggsave("metric_comp_heatplot.pdf", scale = 1, dpi = 400)
+
 
 

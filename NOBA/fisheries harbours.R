@@ -39,6 +39,8 @@ harbours$group<-0
 harbours10<-harbours[1:10,]
 harbours20<-harbours[1:20,]
 harbours30<-harbours[1:30,]
+selected<-c(1:11, 15, 26)
+harbours_sel <- harbours[selected,]
 
 ### use  rbm.r code by M.SUmmer
 # must run code manually, step by step. 
@@ -67,17 +69,27 @@ cnames <- aggregate(cbind(long, lat) ~ id, data=NOBA.f, FUN=function(x)mean(rang
 
 #legge til land
 world<- map_data("world") 
-NOBAmap <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_path(colour="gray50") + scale_y_continuous(breaks=(-2:2) * 30) + scale_x_continuous(breaks=(-4:4) * 45) + xlim(-23,70) +ylim(58,85)
+NOBAmap <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_polygon(colour="gray65", fill="gray65") +  coord_cartesian(xlim = c(-27, 70), ylim=c(58, 85))
 NOBAmap <- NOBAmap + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="burlywood2", fill=NA) +theme_bw() + ggtitle("NOBA map with fisheries harbours ")
+
+#+ scale_y_continuous(breaks=(-2:2) * 30) + scale_x_continuous(breaks=(-4:4) * 45) +
 
 # 10, 20 og 30 viktigste havner
 HCol<-rev(brewer.pal(3, "YlGnBu"))
-NOBAmap + geom_point(data=harbours30, aes(x=LON, y=LAT, group=group, colour="30"), size=4) + geom_point(data=harbours20, aes(x=LON, y=LAT, group=group, colour="20"), size=4) + geom_point(data=harbours10, aes(x=LON, y=LAT, group=group, colour="10"), size=4) + guides(fill=guide_legend(title="Fisheries harbours")) + scale_color_manual(name = "Fisheries harbours", labels = c(10, 20, 30), values = HCol)
-
+NOBAmap4 <- NOBAmap + geom_point(data=harbours30, aes(x=LON, y=LAT, group=group, colour="30"), size=4) + geom_point(data=harbours20, aes(x=LON, y=LAT, group=group, colour="20"), size=4) + geom_point(data=harbours10, aes(x=LON, y=LAT, group=group, colour="10"), size=4) + guides(fill=guide_legend(title="Fisheries harbours")) + scale_color_manual(name = "Fisheries harbours", labels = c(10, 20, 30), values = HCol)
+NOBAmap4
 ggsave("fisheries harbours.pdf", scale = 1, dpi = 400)
 
+#detaljert fiskerihavnkart
 
+world<- map_data("world") 
+NOBAmap5 <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_polygon(colour="gray65", fill="gray65") +  coord_cartesian(xlim = c(0, 40), ylim=c(58, 72))
+NOBAmap5 <- NOBAmap5 + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="burlywood2", fill=NA) +theme_bw() + ggtitle("NOBA map with selected fisheries harbours ")
 
+NOBAmap5 <- NOBAmap5 + geom_point(data=harbours_sel, aes(x=LON, y=LAT, group=group, colour="selected harbours"), size=6) + guides(fill=guide_legend(title="Sel.Fisheries harbours")) + scale_color_manual(name = "Selected \n Fisheries harbours", labels = c("harbour", 20, 30), values = HCol) + theme(plot.title = element_text(size=16, face="bold")) 
+NOBAmap5
+ggsave("fisheries harbours selected.pdf", scale = 1, dpi = 400)
+write.csv(harbours_sel, "fisheries harbours selected.csv")
 
 
 

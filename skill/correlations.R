@@ -369,6 +369,43 @@ ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identit
 ggsave("S_corr_landings.pdf")
 
 
+
+
+### Forecast metric plots
+#biomass data
+BioMetrics<-as.data.frame(cbind(MEF_b[,1:2], AE_b[,1:2], AAE_b[,1:2], RMSE_b[,1:2], S_b[,1:2]))
+#colnames(BioMetrics) <- c("MEF", "AE", "AAE", "RMSE", "S.Correl.") 
+#rownames(BioMetrics) <- rownames(MEF_b)
+BioMetrics$names <- rownames(BioMetrics)
+
+BioMetrics.m <- melt(BioMetrics, id = c("names"))
+BioForcPlot <-   ggplot(BioMetrics.m, aes(variable, value, fill=variable)) + geom_bar(stat = "identity")  + facet_wrap(~names, as.table=FALSE) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1, size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_fill_brewer(palette="Paired", name="Skill Metric", labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f")) + ggtitle("Forecast skill metrics - Biomass data") + theme(plot.title = element_text(size=16, face="bold")) + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "AE_a", "AE_p", "AAE_a", "AAE_p", "RMSE_a", "RMSE_p", "S_a", "S_p"), labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f"), name="")
+BioForcPlot
+ggsave("Forecast Biom Metrics.pdf")
+
+#landings data
+LandMetrics<-as.data.frame(cbind(MEF_l[,1:2], AE_l[,1:2], AAE_l[,1:2], RMSE_l[,1:2], S_l[,1:2]))
+#colnames(LandMetrics) <- c("MEF", "AE", "AAE", "RMSE", "S.Correl.") 
+#rownames(LandMetrics) <- rownames(MEF_l)
+LandMetrics$names <- rownames(LandMetrics)
+
+LandMetrics.m <- melt(LandMetrics, id = c("names"))
+LandForcPlot <-   ggplot(LandMetrics.m, aes(variable, value, fill=variable)) + geom_bar(stat = "identity")  + facet_wrap(~names, as.table=FALSE) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1,  size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_fill_brewer(palette="Paired", name="Skill Metric", labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f")) + ggtitle("Forecast skill metrics - Landings data") + theme(plot.title = element_text(size=16, face="bold")) + theme(plot.title = element_text(size=16, face="bold")) + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "AE_a", "AE_p", "AAE_a", "AAE_p", "RMSE_a", "RMSE_p", "S_a", "S_p"), labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f"), name="")
+LandForcPlot
+ggsave("Forecast Land Metrics.pdf")
+
+#Ecoind data
+EcoMetrics<-as.data.frame(cbind(MEF_e[,1:2], AE_e[,1:2], AAE_e[,1:2], RMSE_e[,1:2], S_e[,1:2]))
+#colnames(EcoMetrics) <- c("MEF", "AE", "AAE", "RMSE", "S.Correl.") 
+#rownames(EcoMetrics) <- rownames(MEF_e)
+EcoMetrics$names <- c("Total Biomass", "Total Catch", "Catch/Biomass", "Fish Biomass", "Demersal/Pelagic Ratio", "TEPs", "Seal Biomass", "Whale Biomass", "Demersal Catch", "Pelagic Catch", "MTL System", "MTL Catch", "Fish Catch", "F.Catch/F.Biomass", "Value", "Proportion Overfished")
+
+EcoMetrics.m <- melt(EcoMetrics, id = c("names"))
+EcoForcPlot <-   ggplot(EcoMetrics.m, aes(variable, value, fill=variable)) + geom_bar(stat = "identity")  + facet_wrap(~names) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1, size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_fill_brewer(palette="Paired", name="Skill Metric", labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f")) + ggtitle("Forecast skill metrics - Ecosystem Indicators data") + theme(plot.title = element_text(size=16, face="bold")) + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "AE_a", "AE_p", "AAE_a", "AAE_p", "RMSE_a", "RMSE_p", "S_a", "S_p"), labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f"), name="")
+EcoForcPlot
+ggsave("Forecast EcoInd Metrics.pdf")
+
+
 # one for each data-type (biomasss, landings, eco-ind.)
 biomass<-cbind(metric_biom_pred, metric_biom_all, metric_biom_74_03, metric_biom_65_74, metric_biom_75_84, metric_biom_85_94, metric_biom_95_04)
 
@@ -650,12 +687,20 @@ intLabels[3,1]<-c("50-75%")
 intLabels[4,1]<-c("75-100%")
 #intLabels[5,1]<-c("80-100%")
 
-# make heatplot
-metricplot <- ggplot(tabel_metric_comp_melt, aes(variable, Metric)) + geom_tile(aes(fill = factor(catVar)), colour = "white") + scale_fill_brewer(palette="Blues", name="% components", label=intLabels) + geom_text(aes(label = round(value, 2), size= 16), show_guide  = F) + theme( axis.text.x = element_text(angle = -45, hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_blank()) + theme(axis.title.y = element_blank()) + theme(legend.title = element_text(size=16, face="bold"))+ theme(legend.text = element_text(colour="grey20", size = 14, face = "bold")) + ggtitle("Percentage of model components with higher performance \n metrics in select time periods vs. full hindcast\n ")+ theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))
+# make heatplot of all columns
+metricplot <- ggplot(tabel_metric_comp_melt, aes(variable, Metric)) + geom_tile(aes(fill = factor(catVar)), colour = "white") + scale_fill_brewer(palette="PiYG", name="% components", label=intLabels) + geom_text(aes(label = round(value, 2), size= 16), show_guide  = F) + theme( axis.text.x = element_text(angle = -45, hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_blank()) + theme(axis.title.y = element_blank()) + theme(legend.title = element_text(size=16, face="bold"))+ theme(legend.text = element_text(colour="grey20", size = 14, face = "bold")) + ggtitle("Percentage of model components with higher performance \n metrics in select time periods vs. full hindcast\n ")+ theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))
 
 metricplot + scale_x_discrete(breaks=c("NoBurnin", "D1965_74", "D1975_84", "D1985_94", "D1995_04", "Forecast", "Forecast_NoBurn"), labels=c("No Burnin", "1965-1974", "1975-1984", "1985-1994", "1995-2004", "Forecast", "Forecast vs. No Burnin")) 
 
 ggsave("metric_comp_heatplot.pdf", scale = 1, dpi = 400)
 
 
+# Heatplot for NoBurning & Forecast ONLY
+tabel_metric_comp_melt2<-subset(tabel_metric_comp_melt, (variable == "NoBurnin")|(variable =="Forecast"))
+
+metricplot2 <- ggplot(tabel_metric_comp_melt2, aes(variable, Metric)) + geom_tile(aes(fill = factor(catVar)), colour = "white") + scale_fill_brewer(palette="PiYG", name="% components", label=intLabels) + geom_text(aes(label = round(value, 2)), size= 5, show_guide  = F) + theme( axis.text.x = element_text(angle = -45, hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_blank()) + theme(axis.title.y = element_blank()) + theme(legend.title = element_text(size=16, face="bold"))+ theme(legend.text = element_text(colour="grey20", size = 14, face = "bold")) + ggtitle("Fraction of model components \n with higher performance  metrics in \n select time periods vs. full hindcast\n ")+ theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))
+
+metricplot2 + scale_x_discrete(breaks=c("NoBurnin", "Forecast")) 
+
+ggsave("metric_comp_heatplot_SELECTED.pdf", width =6, height = 11, dpi = 400)
 

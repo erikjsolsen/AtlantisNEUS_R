@@ -134,7 +134,8 @@ rownames(skill_table_landings)<-NEUS.names.rows.l
 ### ECOLOGICAL INDICATORS for model data
 setwd("~/Documents/G-copy/R/get_indicators_4Erik")
 path=getwd()
-bzero<-1
+#bzero<-1
+bzero<-Bio_m[1,2:36]
 EcoInd_model<-get.Ind(Bio_m[1,],Catch_m[1,],bzero,path)
 EcoInd_model[24]<-1964
 names(EcoInd_model)[24]<-"Year"
@@ -146,6 +147,7 @@ for (i in 2:nrow(Bio_m)) {
 
 
 #### ECOLOGICAL INDICATORS for observed / landings data
+bzero<-Bio_o[1,2:27]
 EcoInd_obs<-get.Ind.obs(Bio_o[1,],Catch_o[1,],bzero,path)
 EcoInd_obs[24]<-1964
 names(EcoInd_obs)[24]<-"Year"

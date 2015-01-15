@@ -21,6 +21,12 @@ NEUSarea<-spTransform(NEUSarea, CRS("+proj=longlat +ellps=GRS80")) #transform to
 
 library(ggplot2)
 
+# give correct box numbers
+NEUSarea$AAREA
+
+AreaNames<-c(25,16, 0, 15,8, 1, 18, 19, 23, 2, 10, 24, 3, 29, 22, 5, 17, 12, 11, 27, 21, 4, 20, 28, 7, 14, 6, 26, 9, 13)
+NEUSarea$AAREA<-AreaNames
+
 # p <- ggplot(NEUSarea@data)
 
 
@@ -78,3 +84,4 @@ Map1 <- Map1 + geom_polygon( data=all_states, aes(x=long, y=lat, group = group),
 Map1
 
 ggsave("NEUS area EcoRegions.pdf", scale = 1, dpi = 400) # save plot to file
+

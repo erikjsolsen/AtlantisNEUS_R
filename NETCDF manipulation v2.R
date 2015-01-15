@@ -91,11 +91,11 @@ colnames(VarBox2004)<-VBnames #replace colnames to the matrix with data
 
 # Set working directory to spatial case
 #setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/Area5close100") #WD with spatial case - closure in Area5 100%
-setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/GoM10") #WD with spatial case - GoM10%
+setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/GB100") #WD with spatial case - GoM10%
 
 #import the .NC file
 #SpatialNC.nc<-open.ncdf("neusA5C100_out.nc")   #import spatial case NCDF file
-SpatialNC.nc<-open.ncdf("neusGB10_out.nc") 
+SpatialNC.nc<-open.ncdf("neusGB100_out.nc") 
 
 # make list of all variables in the NCDF file
 nvarlist<-c(0)
@@ -226,9 +226,8 @@ intLabels[7,1]<-c(">5")
 
 
 #actual plotting step
-map4<-ggplot(data = PMD, aes(x = long, y = lat, fill = catVar, group = group)) + 
-  geom_polygon() + geom_path(colour = "grey", lwd = 0.1) + coord_equal() + labs(x = "LON", y = "LAT", fill = "Spatial/Base") + 
-  ggtitle("BIOMASS Comparison base case w spatial case") +facet_wrap(~variable)  + scale_fill_gradientn(colours=brewer.pal(7, "PiYG"), guide="legend", label=intLabels) # creates a faceted - multi plot
+map4<-ggplot(data = PMD, aes(x = long, y = lat, fill = catVar, group = group)) +geom_polygon() + geom_path(colour = "grey", lwd = 0.1) + coord_equal() + labs(x = "LON", y = "LAT", fill = "Spatial/Base") + 
+  ggtitle("BIOMASS  Comparison base case w GB100 scenario") +facet_wrap(~variable)  + scale_fill_gradientn(colours=brewer.pal(7, "PiYG"), guide="legend", label=intLabels) # creates a faceted - multi plot
   #facet_wrap(~variable)+ scale_fill_gradient(limits=c(0.95, 1.05), low="firebrick4") +  theme(text = element_text(size=14))  # creates a faceted - multi plot
   #facet_wrap(~variable)+ scale_fill_gradient(limits=c(0.9, 8), low="firebrick4") +  theme(text = element_text(size=14))  # creates a faceted - multi plot
 #facet_wrap(~variable)+ scale_fill_gradient2(midpoint=1, limits=c(0, 8), low="firebrick4", high="navy3") +  theme(text = element_text(size=14))  # creates a faceted - multi plot

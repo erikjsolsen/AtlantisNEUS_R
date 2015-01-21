@@ -6,6 +6,14 @@
 
 
 library(rgdal)
+library(ggplot2)
+library(rgeos)
+library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
+library("ggmap", lib.loc="/Users/eriko/Library/R/3.0/library")
+library("RgoogleMaps", lib.loc="/Users/eriko/Library/R/3.0/library")
+library("mapdata", lib.loc="/Users/eriko/Library/R/3.0/library")
+library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
+
 
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
 
@@ -19,7 +27,8 @@ str(NEUSarea, max.level=3)
 NEUSarea@proj4string
 NEUSarea<-spTransform(NEUSarea, CRS("+proj=longlat +ellps=GRS80")) #transform to LAT and LONG coordinates
 
-library(ggplot2)
+
+
 
 # give correct box numbers
 NEUSarea$AAREA
@@ -29,31 +38,44 @@ NEUSarea$AAREA<-AreaNames
 
 # p <- ggplot(NEUSarea@data)
 
+# project colours
+# blues: "#A6CEE3" "#1F78B4" 
+# greens: "#B2DF8A" "#33A02C"  
+# oranges: "#FDBF6F" "#FF7F00" 
 
 ## Plotting the Atlantis geometry
-library(rgeos)
 
 NEUS.f<-fortify(NEUSarea, region="AAREA") #creates X - Y points of the polygons
 
 cnames <- aggregate(cbind(long, lat) ~ id, data=NEUS.f, FUN=function(x)mean(range(x)))
 
-Map <- ggplot(NEUS.f, aes(long, lat, group = group, fill =id, label=id)) + geom_polygon(colour="darkseagreen2", fill="steelblue1") +   coord_equal() + labs(x = "Longitude", y = "Latitude") + 
-  ggtitle("NEUS map")  #+ geom_text(size=3)#actual ggplot2 function creating a ggplot map object called 'Map'
+Map <- ggplot(NEUS.f, aes(long, lat, group = group, fill =id, label=id)) + geom_polygon(fill="#A6CEE3", colour="white") +   coord_equal() + labs(x = "Longitude", y = "Latitude") +   theme_bw() + ggtitle("Northeast US (NEUS) Atlantis model area") + theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))+ theme( axis.text.x = element_text(hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_text(size=14, face="bold")) + theme(axis.title.y = element_text(size=14, face="bold"))
+
+#+ geom_text(size=3)#actual ggplot2 function creating a ggplot map object called 'Map'
 
 Map <- Map + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4) + coord_map()
 
 Map # plots NEUS map area
 
 
-## Adding map of US states to the Atlantis geometry (previous map)
-library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
+## Adding world map
+
 all_states <- map_data("state") # get US State dataset from maps library
 all_states$id<-0 # add an ID column so that NEUS.f and all_states can be compared. 
+world<-map_data("worldHires")
+world$id<-0
+NAm<-rbind(subset(world, region=Canada), subset(world, region=USA))
 
-Map <- Map + geom_polygon( data=all_states, aes(x=long, y=lat, group=group),colour="white", fill="grey52" ) + xlim(-77,-63) +ylim(34,48) #adds the US state map to the Atlantis ggplot object, limiting it to the spatial region of NEUS
+#Map <- Map + geom_polygon( data=all_states, aes(x=long, y=lat, group=group),colour="white", fill="grey52" )  + coord_cartesian(xlim = c(-77, -63), ylim = c(34, 48) ) + theme_bw()
+Map <- Map + geom_polygon( data=NAm, aes(x=long, y=lat, group=group),colour="white", fill="grey62" )  + coord_cartesian(xlim = c(-77, -63), ylim = c(34, 48) ) 
+
+
+#adds the US state map to the Atlantis ggplot object, limiting it to the spatial region of NEUS
 
 Map # plots the NEUS map with the US states
-ggsave("NEUS area states.pdf", scale = 1, dpi = 400) # save plot to file
+
+setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
+ggsave("NEUS area states.pdf", width = 15, height = 15, dpi = 400) # save plot to file
 
 
 
@@ -84,4 +106,14 @@ Map1 <- Map1 + geom_polygon( data=all_states, aes(x=long, y=lat, group = group),
 Map1
 
 ggsave("NEUS area EcoRegions.pdf", scale = 1, dpi = 400) # save plot to file
+
+### Plotting NEUS areas on Google Map
+# there is some problem with projection...
+
+al1 <- get_map(location = c(lon = -70, lat = 42), zoom = 6, maptype = 'satellite')
+NEUSGooglM1 <- ggmap(al1) 
+NEUSGooglM1 + geom_polygon(data=NEUS.f, aes(x=long, y=lat, group = group, fill =id, label=id), colour="darkseagreen2", fill=NA) 
+
++ geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), colour="white", size=4) + coord_map()
+
 

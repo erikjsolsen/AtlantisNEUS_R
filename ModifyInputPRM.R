@@ -1,21 +1,31 @@
 # Adjusting .PRM input files for Atlantis NEUS model 
 #By: Erik Olsen 
 #First created: 5.12.2013 
-#Modified: 21.01.2014
+#Modified: 09.02.2015
 
 ### Importing HARVEST .PRM file
 setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/ALL10") # Set WD to correct folder
-hh<-readLines("at_harvest_dynhist_neus_base_effort.prm", n=-1) #Reads the harvest.prm file into R, can adjust length of reading by n argument. May take some time to run as the .PRM file is over 15000 lines
+hh<-readLines("at_harvest_neus_v15_DE.prm", n=-1) #Reads the harvest.prm file into R, can adjust length of reading by n argument. May take some time to run as the .PRM file is over 15000 lines
 
 ### SETTING the closure rates for the different areas
+
 # NEUS Areas:     0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29
-closurestring<-c("0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0") #Whole NEUS area closures
-#closurestring<-c("0.0 1.0 1.0 1.0 1.0 0.0 1.0 1.0 0.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0") #Cape Wind - area 5 and 8
-#closurestring<-c("0.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.75 0.5 1.0 0.5 0.5 0.5 0.5 1.0 1.0 0.5 0.5 1.0 1.0 0.5 1.0 1.0 1.0 1.0 1.0") #Gulf of Maine closures
-#closurestring<-c("0.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0") #Base-case closures
-#closurestring<-c("0.0 1.0 1.0 1.0 1.0 1.0 1.0 0.5 0.0 0.0 0.0 0.5 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0") #Georges Bank closures
+closurestring<-c("0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1") #Whole NEUS area closures
 
+#Cape Wind (CW): area 7 and 8
+#closurestring<-c("1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.0 0.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0") 
 
+#Gulf of Maine closures (GoM): 10,11, 12 (50%), 16, 17, 18, 19,  20 
+#closurestring<-c("1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.75 0.5 1.0 0.5 0.5 0.5 0.5 1.0 1.0 0.5 0.5 1.0 1.0 0.5 1.0 1.0 1.0 1.0 1.0") 
+
+#Georges Bank closures (GB):  8, 9 (50%), 12 (50%), 13, 14,  15
+#closurestring<-c("1.0 1.0 1.0 1.0 1.0 1.0 1.0 0.5 0.0 0.0 0.0 0.5 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0") 
+
+#Base-case closures
+#closurestring<-c("1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0") 
+
+MPAmidwcCEP      30
+MPA$$$$$$$$$$$$$$$$
 # Need to create list of the MPA_Fisheries codes
 ff<-grep("MPA", hh, value=TRUE) #find lines with MPA
 ff1<-ff[4:36]
@@ -34,5 +44,5 @@ for (i in 1:length(MPAFisheriesNames)) #loops through all Fisheries and changes 
 	}
 
 # Write to file
-write(hh, file="at_harvest_dynhist_NEUS_ALL100.prm") 
+write(hh, file="at_harvest_NEW.prm") 
 

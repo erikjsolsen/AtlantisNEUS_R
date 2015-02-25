@@ -53,7 +53,7 @@ Map <- ggplot(NEUS.f, aes(long, lat, group = group, fill =id, label=id)) + geom_
 
 #+ geom_text(size=3)#actual ggplot2 function creating a ggplot map object called 'Map'
 
-Map <- Map + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4) + coord_map()
+#Map <- Map + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4) + coord_map()
 
 Map # plots NEUS map area
 
@@ -67,15 +67,15 @@ world$id<-0
 NAm<-rbind(subset(world, region=Canada), subset(world, region=USA))
 
 #Map <- Map + geom_polygon( data=all_states, aes(x=long, y=lat, group=group),colour="white", fill="grey52" )  + coord_cartesian(xlim = c(-77, -63), ylim = c(34, 48) ) + theme_bw()
-Map <- Map + geom_polygon( data=NAm, aes(x=long, y=lat, group=group),colour="white", fill="grey62" )  + coord_cartesian(xlim = c(-77, -63), ylim = c(34, 48) ) 
+Map0 <- Map + geom_polygon( data=NAm, aes(x=long, y=lat, group=group),colour="white", fill="grey62" )  + coord_cartesian(xlim = c(-77, -63), ylim = c(34, 48) ) + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4) #+ coord_map()
 
 
 #adds the US state map to the Atlantis ggplot object, limiting it to the spatial region of NEUS
 
-Map # plots the NEUS map with the US states
+Map0 # plots the NEUS map with the US states
 
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
-ggsave("NEUS area states.pdf", width = 15, height = 15, dpi = 400) # save plot to file
+ggsave("NEUS area states and CAN.pdf", width = 15, height = 15, dpi = 400) # save plot to file
 
 
 
@@ -97,23 +97,20 @@ SS.f <- fortify(SS)
 MAB.f <- fortify(MAB)
 
 # add ecoregions to NEUS map
-Map1 <- Map + geom_polygon( data=GB.f, aes(x=long, y=lat, group = group),colour="red3", fill="NA") #add Georges bank to plot 
-Map1 <- Map1 + geom_polygon( data=GoM.f, aes(x=long, y=lat, group = group),colour="green4", fill="NA") #add Gulf og Maine to
-Map1 <- Map1 + geom_polygon( data=SS.f, aes(x=long, y=lat, group = group),colour="navy", fill="NA") #add Scotian Shelf to
-Map1 <- Map1 + geom_polygon( data=MAB.f, aes(x=long, y=lat, group = group),colour="gray24", fill="NA") #add Mid-Atlantic Bigh to
-Map1 <- Map1 + geom_polygon( data=all_states, aes(x=long, y=lat, group = group),colour="white", fill="grey52" ) + xlim(-77,-63) +ylim(34,48) #adds the US state map to the Atlantis ggplot object, limiting it to the spatial region of NEUS
+Map1 <- Map0 + geom_polygon( data=GB.f, aes(x=long, y=lat, group = group),colour="red3", fill="NA") + geom_polygon( data=GoM.f, aes(x=long, y=lat, group = group),colour="green4", fill="NA")  + geom_polygon( data=SS.f, aes(x=long, y=lat, group = group),colour="navy", fill="NA")  + geom_polygon( data=MAB.f, aes(x=long, y=lat, group = group),colour="gray24", fill="NA")  
 
 Map1
 
-ggsave("NEUS area EcoRegions.pdf", scale = 1, dpi = 400) # save plot to file
+setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape")
+ggsave("NEUS area EcoRegions.pdf", scale = 1, width = 10, height = 10, dpi = 400) # save plot to file
 
 ### Plotting NEUS areas on Google Map
 # there is some problem with projection...
 
-al1 <- get_map(location = c(lon = -70, lat = 42), zoom = 6, maptype = 'satellite')
-NEUSGooglM1 <- ggmap(al1) 
-NEUSGooglM1 + geom_polygon(data=NEUS.f, aes(x=long, y=lat, group = group, fill =id, label=id), colour="darkseagreen2", fill=NA) 
+#al1 <- get_map(location = c(lon = -70, lat = 42), zoom = 6, maptype = 'satellite')
+#NEUSGooglM1 <- ggmap(al1) 
+#NEUSGooglM1 + geom_polygon(data=NEUS.f, aes(x=long, y=lat, group = group, fill =id, label=id), colour="darkseagreen2", fill=NA) 
 
-+ geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), colour="white", size=4) + coord_map()
+#+ geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), colour="white", size=4) + coord_map()
 
 

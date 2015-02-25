@@ -5,6 +5,9 @@
 
 # must import data files using skill_assess_v2.R script
 
+#---------------------------------------------------------------
+### LIBRARIES AND SOURCES
+
 library(ggplot2)
 library(reshape2)
 library(data.table)
@@ -13,23 +16,27 @@ library(RColorBrewer)
 library("classInt", lib.loc="/Users/eriko/Library/R/3.0/library")
 library(grid)
 
-# more detailed subsets for 74-03 (No_Burnin), 65-74, 75-84, 85-94, 95-04
-Y1<-c(1964, 1974, 1965, 1975, 1985, 1995, 2005)
-Y2<-c(2004, 2003, 1974, 1984, 1994, 2004, 2013)
-
-
 # Sourcing get.Ind code
 source("~/Documents/G-copy/R/get_indicators_4Erik/get_indicators_4Erik_mod.R")
 
+#source multiplot
+source("~/AtlantisNEUS_R/multiplot function.R")
+
+#---------------------------------------------------------------
+### USER DEFINED FUNCTIONS
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x))
+}
 
 
-### Importing data files and species codes
-setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/data") 
+#-----------------------------------------------------------------
+# USER DEFINED GLOBAL VARIABLES
+Y1<-c(1964, 1974, 1965, 1975, 1985, 1995, 2005)
+Y2<-c(2004, 2003, 1974, 1984, 1994, 2004, 2013)
 
-
-
-###### ##### #####
+#-----------------------------------------------------------------
 ###  Importing data
+setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/data") 
 
 #biomass/survey data (normalized:  x-X/X (observed - mean/mean)
 model_biom<-read.table("Modeled_Biomass_std.csv", head=TRUE, sep=",")
@@ -123,7 +130,8 @@ for (j in 1:length(NEUS.names.rows.l)) {
 
 rownames(skill_table_landings)<-NEUS.names.rows.l
 
-#########  ECOL INDICATORS
+#-----------------------------------------------------------------
+####  CALCULATE ECOSYSTEM INDICATORS
 # Seabirds not included in TEP of TotalBio group
 # changes made to get_indicators_4Erik_mod.R 
 ### ECOLOGICAL INDICATORS for model data
@@ -160,7 +168,7 @@ save(EcoInd_obs, file="EcoIndicators_observedv2.RData")
 
 
 
-
+#-----------------------------------------------------------------
 ### CORRELATION COEFFICIENTS
 # BIOMASS: Calculating Correlation Coefficients using both Spearman, Pearson and Kendall methods
 IndNames<-names(model_biom)[1:23]
@@ -247,7 +255,8 @@ for (j in 1:length(Y1)){
 }
 
 
-# IMPORT metrics tables to combine with correlation tables
+#-----------------------------------------------------------------
+#### IMPORT metrics tables to combine with correlation tables
 metric_biom_all<-read.csv("metric_biom_all.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 metric_biom_74_03<-read.csv("metric_biom_74_03.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 metric_biom_65_74<-read.csv("metric_biom_65_74.csv",head=TRUE, sep=",", nrows=23, row.names=1)
@@ -447,7 +456,9 @@ K_corr<-rbind(cbind(metric_biom_all[7], metric_biom_pred[7], metric_biom_74_03[7
 
 MEF[8]<-rownames(MEF)  
 MEF_e[8]<-rownames(MEF_e)
-  
+
+
+#-----------------------------------------------------------------
 ### Plot each metric along line
 #colorblind friendly palettes
 cbPalette1 <- c("#000000", "#D55E00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",  "#E69F00", "#CC79A7")
@@ -523,7 +534,7 @@ ggsave("S_corr_landings.pdf")
 
 
 
-
+#-----------------------------------------------------------------
 ### Forecast metric plots
 #biomass data
 BioMetrics<-as.data.frame(cbind(MEF_b[,1:2], AE_b[,1:2], AAE_b[,1:2], RMSE_b[,1:2], S_b[,1:2]))
@@ -586,14 +597,23 @@ EcoForcPlot
 ggsave("Forecast EcoInd Metrics.pdf")
 
 
-
+#-----------------------------------------------------------------
 ### PCA Analyses
 # one for each data-type (biomasss, landings, eco-ind.)
-biomass<-cbind(metric_biom_pred, metric_biom_all, metric_biom_74_03, metric_biom_65_74, metric_biom_75_84, metric_biom_85_94, metric_biom_95_04)
 
-ecoind<-cbind(metric_ecoind_pred, metric_ecoind_all, metric_ecoind_74_03, metric_ecoind_65_74, metric_ecoind_75_84, metric_ecoind_85_94, metric_ecoind_95_04)
+biomass<-cbind(metric_biom_pred, metric_biom_all)
 
-landings<-cbind(metric_land_pred, metric_land_all, metric_land_74_03, metric_land_65_74, metric_land_75_84, metric_land_85_94, metric_land_95_04)
+ecoind<-cbind(metric_ecoind_pred, metric_ecoind_all)
+
+landings<-cbind(metric_land_pred, metric_land_all)
+
+
+# full analysis of all time-periods yields initial detailed plot
+#biomass<-cbind(metric_biom_pred, metric_biom_all, metric_biom_74_03, metric_biom_65_74, metric_biom_75_84, metric_biom_85_94, metric_biom_95_04)
+
+#ecoind<-cbind(metric_ecoind_pred, metric_ecoind_all, metric_ecoind_74_03, metric_ecoind_65_74, metric_ecoind_75_84, metric_ecoind_85_94, metric_ecoind_95_04)
+
+#landings<-cbind(metric_land_pred, metric_land_all, metric_land_74_03, metric_land_65_74, metric_land_75_84, metric_land_85_94, metric_land_95_04)
 
 # PCA analysis of metrics
 biomass_s<-biomass[complete.cases(biomass),]
@@ -609,8 +629,13 @@ landings_PC<-prcomp(landings_s, scale=TRUE)
 # null_PC<-data.frame(x=numeric(49), y=numeric(49))
 
 BIO_PC1_2<-data.frame(biom_PC$rotation[,1:2])
+BIO_PC1_2$P_A<-substrRight(rownames(BIO_PC1_2), 1)
+
 ECO_PC1_2<-data.frame(ecoind_PC$rotation[,1:2])
+ECO_PC1_2$P_A<-substrRight(rownames(ECO_PC1_2), 1)
+
 LAN_PC1_2<-data.frame(landings_PC$rotation[,1:2])
+LAN_PC1_2$P_A<-substrRight(rownames(LAN_PC1_2), 1)
 
 # set a color scheme
 PC_colors<-brewer.pal(5, "Set1")
@@ -618,6 +643,7 @@ PC_colors<-brewer.pal(5, "Set1")
 #PCA loadings plot of BIOMASS
 PCplot1<-ggplot(BIO_PC1_2)
 
+#label each metric
 PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("MEF", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("MEF", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[1])
 PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("AE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("AE", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[2])
 PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("AAE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("AAE", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[3])
@@ -626,8 +652,18 @@ PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep(
 PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("S_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("S_", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
 PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("K_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=row.names(BIO_PC1_2[grep("K_", rownames(BIO_PC1_2)),])), size = 4, vjust=1, color=PC_colors[5])
 
+#simple labelling
+#PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("MEF", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[1])
+#PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("AE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[2])
+#PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("AAE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[3])
+#PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("RMSE", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[4])
+#PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("P_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[5])
+#PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("S_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[5])
+#PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("K_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[5])
 
-PCplot1 <- PCplot1 + geom_segment(data=BIO_PC1_2, linetype=2, color="gray70", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="gray60") +  ggtitle("Biomass, loadings plot") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.3, 0.33), ylim = c(-0.3, 0.33) )
+
+PCplot1 <- PCplot1 + geom_segment(data=BIO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="gray80") +  ggtitle("Biomass") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.5, 0.5), ylim = c(-0.5, 0.5) ) + theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+
 PCplot1
 ggsave("PCA_biom_all.pdf", width=11, height=11)
 
@@ -644,7 +680,8 @@ PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep(
 
 
 
-PCplot2 <- PCplot2 + geom_segment(data=ECO_PC1_2,linetype=2, color="gray70", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Ecological indicators, loadings plot") + theme(plot.title = element_text(size = rel(2), colour = "midnightblue")) + coord_cartesian(xlim = c(-0.225, 0.225), ylim = c(-0.3, 0.15) )
+PCplot2 <- PCplot2 + geom_segment(data=ECO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Ecological indicators") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.47, 0.47), ylim = c(-0.47, 0.47) )+ theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+PCplot2
 ggsave("PCA_ecoind_all.pdf", width=11, height=11)
 
 #PCA loadings plot of LANDINGS
@@ -660,11 +697,9 @@ PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep(
 
 
 
-PCplot3 <- PCplot3 + geom_segment(data=LAN_PC1_2, linetype=2, color="gray70", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Landings, loadings plot") + theme(plot.title = element_text(size = rel(2), colour = "midnightblue")) + coord_cartesian(xlim = c(-0.3, 0.3), ylim = c(-0.3, 0.3) )
+PCplot3 <- PCplot3 + geom_segment(data=LAN_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Landings") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.51, 0.51), ylim = c(-0.51, 0.51) )+ theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+PCplot3
 ggsave("PCA_land_all.pdf", width=11, height=11)
-
-  # TODO:
-    # calculate "center of gravity" for each metric which can be plotted. (i.e. average position)
 
 
 #need to source multiplot function
@@ -672,6 +707,7 @@ multiplot(PCplot1, PCplot2, PCplot3, cols=2)
 #save manually using Export button on Plot-Viewing Window
 
 
+#-----------------------------------------------------------------
 #### Tally when each time-series performs best 
 # eg. comparing the Full Hindcast w No Burnin w Predicted, w decades
 # use 'biomass', 'landings' and 'ecoind' as input data and extract to new data.frame

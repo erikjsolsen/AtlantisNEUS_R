@@ -52,6 +52,8 @@ NOBAmap1 + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size
 ggsave("NOBA Atlantis map.pdf", scale = 1, dpi = 400)
 
 
+
+#-----------------------------------------------------------
 ### mapping with google-earth
 #Not working - only generates a square map...
 nn<-as.matrix(NOBA.f[,1:2])

@@ -38,11 +38,12 @@ Y2<-c(2004, 2003, 1974, 1984, 1994, 2004, 2013)
 ###  Importing data
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/data") 
 
-#biomass/survey data (normalized:  x-X/X (observed - mean/mean)
+#biomass/survey/satellite PrimProd data (normalized:  x-X/X (observed - mean/mean)
 model_biom<-read.table("Modeled_Biomass_std.csv", head=TRUE, sep=",")
 survey_biom<-read.table("Observed_Biomass_std.csv", head=TRUE, sep=",")
 species_codes<-read.csv("NEUS_species_codes.csv")
 mef<-read.table("MEF_table_initial.csv", head=TRUE, sep=",", row.names=1)
+PPD<-read.csv("PPD_means.csv")
 
 #Landings data (not normalized)
 landings_model<-read.table("Modeled_Landings.csv", head=TRUE, sep=",")
@@ -60,12 +61,19 @@ metric_biom_75_84<-read.csv("metric_biom_75_84.csv",head=TRUE, sep=",", nrows=23
 metric_biom_85_94<-read.csv("metric_biom_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 metric_biom_95_04<-read.csv("metric_biom_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 
-metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",",nrows=16,  row.names=1)
-metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", nrows=16, row.names=1)
+metric_land_all<-read.csv("metric_land_all.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_74_03<-read.csv("metric_land_74_03.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_65_74<-read.csv("metric_land_65_74.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_75_84<-read.csv("metric_land_75_84.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_85_94<-read.csv("metric_land_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+metric_land_95_04<-read.csv("metric_land_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
+
+metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",",nrows=22,  row.names=1)
+metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", nrows=22, row.names=1)
+metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", nrows=22, row.names=1)
+metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", nrows=22, row.names=1)
+metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", nrows=22, row.names=1)
+metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", nrows=22, row.names=1)
 
 #### Import full NEUS output table & adjusting numbers for weight
 Bio_m<-read.table("neus_base.csv", head=TRUE, sep=",")
@@ -86,6 +94,12 @@ Top_pred$PIN<-Top_pred$PIN*SeaWeight
 Top_pred<-subset(Top_pred, Year>1963)
 # only include seals and Right Whales
 Bio_o<-cbind(Bio_o, Top_pred[3:6])
+# add Primary produciton to observed data file 
+Bio_o$PL<-NA
+for (i in 1:length(PPD$Year)) {
+  Bio_o$PL[(PPD$Year[i]-1963)]<-PPD$VGPM2[i] 
+  }
+
 
 
 ## give real-world species names to column heads of data tables
@@ -150,7 +164,7 @@ for (i in 2:nrow(Bio_m)) {
 
 
 #### ECOLOGICAL INDICATORS for observed / landings data
-bzero<-Bio_o[1,2:27]
+bzero<-Bio_o[1,2:28]
 EcoInd_obs<-get.Ind.obs(Bio_o[1,],Catch_o[1,],bzero,path)
 EcoInd_obs[24]<-1964
 names(EcoInd_obs)[24]<-"Year"
@@ -229,13 +243,13 @@ for (j in 1:length(Y1)){
 
 
 # ECOLOGICAL INDICATORS: Calculating Correlation Coefficients using both Spearman, Pearson and Kendall methods
-IndNames<-names(EcoInd_obs)[1:17]
+IndNames<-names(EcoInd_obs)[1:22]
 model<-EcoInd_model
 obs<-EcoInd_obs
 
 
 for (j in 1:length(Y1)){
-  cortab_i<-data.frame(S_h=numeric(17), P_h=numeric(17),  K_h=numeric(17),  row.names=IndNames)  
+  cortab_i<-data.frame(S_h=numeric(22), P_h=numeric(22),  K_h=numeric(22),  row.names=IndNames)  
 
     for (i in 1:length(IndNames)){
       #need to test if the inputs are NAs
@@ -257,26 +271,6 @@ for (j in 1:length(Y1)){
 
 #-----------------------------------------------------------------
 #### IMPORT metrics tables to combine with correlation tables
-metric_biom_all<-read.csv("metric_biom_all.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_biom_74_03<-read.csv("metric_biom_74_03.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_biom_65_74<-read.csv("metric_biom_65_74.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_biom_75_84<-read.csv("metric_biom_75_84.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_biom_85_94<-read.csv("metric_biom_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_biom_95_04<-read.csv("metric_biom_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-
-metric_ecoind_all<-read.csv("metric_ecoind_all.csv",head=TRUE, sep=",",nrows=16,  row.names=1)
-metric_ecoind_74_03<-read.csv("metric_ecoind_74_03.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_65_74<-read.csv("metric_ecoind_65_74.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_75_84<-read.csv("metric_ecoind_75_84.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_85_94<-read.csv("metric_ecoind_85_94.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-metric_ecoind_95_04<-read.csv("metric_ecoind_95_04.csv",head=TRUE, sep=",", nrows=16, row.names=1)
-
-metric_land_all<-read.csv("metric_land_all.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_land_74_03<-read.csv("metric_land_74_03.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_land_65_74<-read.csv("metric_land_65_74.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_land_75_84<-read.csv("metric_land_75_84.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_land_85_94<-read.csv("metric_land_85_94.csv",head=TRUE, sep=",", nrows=23, row.names=1)
-metric_land_95_04<-read.csv("metric_land_95_04.csv",head=TRUE, sep=",", nrows=23, row.names=1)
 
 # select without seabirds
 metric_biom_all<-metric_biom_all[!row.names(metric_biom_all) %in% c("Birds"),]
@@ -285,8 +279,9 @@ metric_biom_65_74<-metric_biom_65_74[!row.names(metric_biom_65_74) %in% c("Birds
 metric_biom_75_84<-metric_biom_75_84[!row.names(metric_biom_75_84) %in% c("Birds"),]
 metric_biom_85_94<-metric_biom_85_94[!row.names(metric_biom_85_94) %in% c("Birds"),]
 metric_biom_95_04<-metric_biom_95_04[!row.names(metric_biom_95_04) %in% c("Birds"),]
-metric_ecoind_all<-metric_ecoind_all[!row.names(metric_ecoind_all) %in% c("Birds"),]
 
+
+metric_ecoind_all<-metric_ecoind_all[!row.names(metric_ecoind_all) %in% c("Birds"),]
 metric_ecoind_74_03<-metric_ecoind_74_03[!row.names(metric_ecoind_74_03) %in% c("Birds"),]
 metric_ecoind_65_74<-metric_ecoind_65_74[!row.names(metric_ecoind_65_74) %in% c("Birds"),]
 metric_ecoind_75_84<-metric_ecoind_75_84[!row.names(metric_ecoind_75_84) %in% c("Birds"),]
@@ -302,13 +297,13 @@ metric_biom_75_84<-cbind(metric_biom_75_84[1:22,c(1,3,5,7)], correlation_biom_19
 metric_biom_85_94<-cbind(metric_biom_85_94[1:22,c(1,3,5,7)], correlation_biom_1985_to_1994)
 metric_biom_95_04<-cbind(metric_biom_95_04[1:22,c(1,3,5,7)], correlation_biom_1995_to_2004)
 
-metric_ecoind_pred<-cbind(metric_ecoind_all[1:16,c(2,4,6,8)], correlation_ecoind_2005_to_2013[(1:16),])
-metric_ecoind_all<-cbind(metric_ecoind_all[1:16,c(1,3,5,7)], correlation_ecoind_1964_to_2004[(1:16),])
-metric_ecoind_74_03<-cbind(metric_ecoind_74_03[1:16,c(1,3,5,7)], correlation_ecoind_1974_to_2003[(1:16),])
-metric_ecoind_65_74<-cbind(metric_ecoind_65_74[1:16,c(1,3,5,7)], correlation_ecoind_1965_to_1974[(1:16),])
-metric_ecoind_75_84<-cbind(metric_ecoind_75_84[1:16,c(1,3,5,7)], correlation_ecoind_1975_to_1984[(1:16),])
-metric_ecoind_85_94<-cbind(metric_ecoind_85_94[1:16,c(1,3,5,7)], correlation_ecoind_1985_to_1994[(1:16),])
-metric_ecoind_95_04<-cbind(metric_ecoind_95_04[1:16,c(1,3,5,7)], correlation_ecoind_1995_to_2004[(1:16),])
+metric_ecoind_pred<-cbind(metric_ecoind_all[1:22,c(2,4,6,8)], correlation_ecoind_2005_to_2013[(1:22),])
+metric_ecoind_all<-cbind(metric_ecoind_all[1:22,c(1,3,5,7)], correlation_ecoind_1964_to_2004[(1:22),])
+metric_ecoind_74_03<-cbind(metric_ecoind_74_03[1:22,c(1,3,5,7)], correlation_ecoind_1974_to_2003[(1:22),])
+metric_ecoind_65_74<-cbind(metric_ecoind_65_74[1:22,c(1,3,5,7)], correlation_ecoind_1965_to_1974[(1:22),])
+metric_ecoind_75_84<-cbind(metric_ecoind_75_84[1:22,c(1,3,5,7)], correlation_ecoind_1975_to_1984[(1:22),])
+metric_ecoind_85_94<-cbind(metric_ecoind_85_94[1:22,c(1,3,5,7)], correlation_ecoind_1985_to_1994[(1:22),])
+metric_ecoind_95_04<-cbind(metric_ecoind_95_04[1:22,c(1,3,5,7)], correlation_ecoind_1995_to_2004[(1:22),])
 
 metric_land_pred<-cbind(metric_land_all[1:21,c(2,4,6,8)], correlation_landings_2005_to_2013)
 metric_land_all<-cbind(metric_land_all[1:21,c(1,3,5,7)], correlation_landings_1964_to_2004)
@@ -582,7 +577,9 @@ ggsave("Forecast Land Metrics.pdf")
 EcoMetrics<-as.data.frame(cbind(MEF_e[,1:2], AE_e[,1:2], AAE_e[,1:2], RMSE_e[,1:2], S_e[,1:2]))
 #colnames(EcoMetrics) <- c("MEF", "AE", "AAE", "RMSE", "S.Correl.") 
 #rownames(EcoMetrics) <- rownames(MEF_e)
-EcoMetrics$names <- c("Total Biomass", "Total Catch", "Catch/Biomass", "Fish Biomass", "Demersal/Pelagic Ratio", "TEPs", "Seal Biomass", "Whale Biomass", "Demersal Catch", "Pelagic Catch", "MTL System", "MTL Catch", "Fish Catch", "F.Catch/F.Biomass", "Value", "Proportion Overfished")
+EcoMetrics$names <- c("Total Biomass", "Total Catch", "Catch/Biomass", "Fish Biomass", "Demersal/Pelagic Ratio", "TEPs", "Seal Biomass", "Whale Biomass", "Demersal Catch", "Pelagic Catch", "MTL System", "MTL Catch", "Biomass/PP", "Demersal biomass/PP", "Pelagic biomass/PP", "Catch/PP", "Demersal Catch/PP", "Pelagic Catch/PP",  "Fish Catch", "F.Catch/F.Biomass", "Proportion Overfished", "Value")
+
+write.csv(EcoMetrics, file="ecometrics v2.csv")
 
 EcoMetrics.m <- melt(EcoMetrics, id = c("names"))
 EcoMetrics.m$met<-sub('_[ap]$', '', EcoMetrics.m$variable)

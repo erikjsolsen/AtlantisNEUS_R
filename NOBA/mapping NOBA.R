@@ -39,7 +39,7 @@ world<- map_data("world")
 NOBAmap1 <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_polygon(colour="gray65", fill="gray65") +  coord_cartesian(xlim = c(-27, 70), ylim=c(58, 85))
 NOBAmap1
 
-NOBAmap1 <- NOBAmap1 + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="tomato3", fill="lightskyblue1", label=id) +theme_bw() + ggtitle("Norwegian - Barents Sea ATLANTIS model area") + theme(plot.title = element_text(size=16, face="bold")) 
+NOBAmap1 <- NOBAmap1 + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="slategray", fill="slategray1", label=id) +theme_bw() + ggtitle("Norwegian - Barents Sea ATLANTIS model area") + theme(plot.title = element_text(size=16, face="bold")) 
 
 NOBAmap1
 ggsave("NOBA Atlantis map wo no.pdf", scale = 1, dpi = 400)
@@ -50,7 +50,7 @@ NOBAmap1 + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size
 #NOBAmap2
 
 ggsave("NOBA Atlantis map.pdf", scale = 1, dpi = 400)
-
+ggsave("NOBA Atlantis map.png", scale = 1, dpi = 400)
 
 
 #-----------------------------------------------------------

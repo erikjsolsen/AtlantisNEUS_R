@@ -49,7 +49,7 @@ NEUS.f<-fortify(NEUSarea, region="AAREA") #creates X - Y points of the polygons
 
 cnames <- aggregate(cbind(long, lat) ~ id, data=NEUS.f, FUN=function(x)mean(range(x)))
 
-Map <- ggplot(NEUS.f, aes(long, lat, group = group, fill =id, label=id)) + geom_polygon(fill="#A6CEE3", colour="white") +   coord_equal() + labs(x = "Longitude", y = "Latitude") +   theme_bw() + ggtitle("Northeast US (NEUS) Atlantis model area") + theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))+ theme( axis.text.x = element_text(hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_text(size=14, face="bold")) + theme(axis.title.y = element_text(size=14, face="bold"))
+Map <- ggplot(NEUS.f, aes(long, lat, group = group, fill =id, label=id)) + geom_polygon(fill="#A6CEE3", colour="white") +   coord_equal() + labs(x = "Longitude", y = "Latitude") +   theme_bw() + ggtitle("Northeast US (NEUS) Atlantis model area") + theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))+ theme( axis.text.x = element_text(hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_text(size=14, face="bold")) + theme(axis.title.y = element_text(size=14, face="bold")) + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4)
 
 #+ geom_text(size=3)#actual ggplot2 function creating a ggplot map object called 'Map'
 

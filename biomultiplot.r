@@ -181,22 +181,24 @@ plot.melt2.data<-merge(AreaPoly, NEUS.melt2, by.x = "id") #combine with NEUS spa
 library("classInt", lib.loc="/Users/eriko/Library/R/3.0/library")
 library("RColorBrewer", lib.loc="/Users/eriko/Library/R/3.0/library")
 
-brks<-classIntervals(plot.melt2.data$data, n=7, style="fixed", fixedBreaks=c(0.5, 0.8, 0.9, 1.1, 1.2, 2, 5, 2230000000)) #define categories
+brks<-classIntervals(plot.melt2.data$data, n=3, style="fixed", fixedBreaks=c(min(plot.melt2.data$data, na.rm=TRUE), 0.9, 0.95, 1.05,  1.1, max(plot.melt2.data$data, na.rm=TRUE))) #define categories
 brks <- round(brks$brks,digits=2) #round
 catVar<-findInterval(plot.melt2.data$data, brks, all.inside=TRUE) #assign categories
 
 PMD<-cbind(plot.melt2.data, catVar) #join data & spatial info
 
 # Create labels from break values
-intLabels <- matrix(1:(length(brks)-1))
-for(i in 1:length(intLabels )){intLabels [i] <- paste(as.character(brks[i]),"-",as.character(brks[i+1]))}
-intLabels[1,1]<-c("< 0.8")
-intLabels[7,1]<-c(">5")
+#intLabels <- matrix(1:(length(brks)-1))
+#for(i in 1:length(intLabels )){intLabels [i] <- paste(as.character(brks[i]),"-",as.character(brks[i+1]))}
+#intLabels[1,1]<-c("< 0.8")
+#intLabels[7,1]<-c(">5")
 
 #actual plotting step
-map4<-ggplot(data = PMD, aes(x = long, y = lat, fill = catVar, group = group)) + 
-  geom_polygon() + geom_path(colour = "grey", lwd = 0.1) + coord_equal() + labs(x = "LON", y = "LAT", fill = "Spatial/Base") + 
-  ggtitle(paste("BIOMASS Comparison base case w spatial case: ", PlotOutFile)) +facet_wrap(~variable)  + scale_fill_gradientn(colours=brewer.pal(7, "PiYG"), guide="legend", label=intLabels) # creates a faceted - multi plot
+map4<-ggplot(data = PMD, aes(x = long, y = lat, fill = factor(catVar), group = group)) + 
+  geom_polygon() + geom_path(colour = "grey", lwd = 0.1) + coord_equal() + labs(x = "", y = "", fill = "Spatial/Base") + 
+  ggtitle(paste("BIOMASS Comparison base case vs spatial case: \n", PlotOutFile)) +facet_wrap(~variable, as.table=FALSE) + scale_fill_brewer(palette="RdYlGn", label=c("<90%", "90-95%", "95-105%", "105-110%", ">110%")) + theme_bw() + theme(axis.ticks.y = element_blank(),axis.text.y = element_blank()) + theme(axis.ticks.x = element_blank(),axis.text.x = element_blank()) +  theme(strip.text.x = element_text(size=7)) 
+
+#+ scale_fill_gradientn(colours=brewer.pal(7, "PiYG"), guide="legend", label=intLabels) # creates a faceted - multi plot
 
 map4 #plot maps
 ggsave(paste(PlotOutFile,".png"), scale = 1, dpi = 400)

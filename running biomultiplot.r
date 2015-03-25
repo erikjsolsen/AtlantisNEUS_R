@@ -1,9 +1,10 @@
 # Running biomultplot
-# 2/5/2014
+# Created: 2/5/2014
+# modified: 19.03.2015 
 # By Erik Olsen
 
 ## RUN biomultiplot for one case (from the base-case scenario catalogue)
-setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/Base_case_test")
+setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/Base_case_new/output")
 
 #set up DataOutTable
 #DOT<-data.frame(ncol=, )
@@ -19,7 +20,7 @@ source("/Users/eriko/AtlantisNEUS_R/biomultiplot.r")
  
 # must run biomultiplot ONCE to get CMSBase (which is pushed from the function)
 # This is not good programming practice, but don't know how to push several variables to global.
-assign(paste0(SNames[4], "_Scen"), biomultiplot ("neusDynEffort_Base_Effort_.nc", "/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/GoM10/neusGB10_out.nc",  "/Users/eriko/AtlantisNEUS_R/data_files/FuncGroupNamesInPlotOrderNEUS.csv", NEUS.f, "outTEST3"))
+assign(paste0(SNames[4], "_Scen"), biomultiplot ("neusDynEffort_BASE_.nc", "/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS_Spatial/GoM10/output/neusDynEffort_spatial_.nc",  "/Users/eriko/AtlantisNEUS_R/data_files/FuncGroupNamesInPlotOrderNEUS.csv", NEUS.f, "Test18_03_15"))
 
 CMB<-as.data.frame(CMSBase) #convert to data.frame
 

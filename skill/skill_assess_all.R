@@ -151,13 +151,14 @@ rownames(skill_table_landings)<-NEUS.names.rows.l
 ### ECOLOGICAL INDICATORS for model data
 setwd("~/Documents/G-copy/R/get_indicators_4Erik")
 path=getwd()
+comp<-c(ncol(Bio_m)-2)
 #bzero<-1
-bzero<-Bio_m[1,2:36]
-EcoInd_model<-get.Ind(Bio_m[1,],Catch_m[1,],bzero,path)
+bzero<-Bio_m[1,2:comp]
+EcoInd_model<-get.Ind(Bio_m[1,],Catch_m[1,],bzero,path, comp)
 EcoInd_model[24]<-1964
 names(EcoInd_model)[24]<-"Year"
 for (i in 2:nrow(Bio_m)) {
-  IndYear<-get.Ind(Bio_m[i,],Catch_m[i,],bzero,path)
+  IndYear<-get.Ind(Bio_m[i,],Catch_m[i,],bzero,path, comp)
   IndYear[24]<-Bio_m$Year[i]
   EcoInd_model<-rbind(EcoInd_model, IndYear, deparse.level = 0)
 }
@@ -458,140 +459,83 @@ MEF_e[8]<-rownames(MEF_e)
 #colorblind friendly palettes
 cbPalette1 <- c("#000000", "#D55E00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",  "#E69F00", "#CC79A7")
 cbPalette2 <- c("#999999", "#D55E00",  "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#E69F00", "#CC79A7")
+cbPalette3 <- c("#000000", brewer.pal(9,"Reds")[3:9])
 #revert to skill/figures working dir
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/figures") 
 
 # MEF plots
 #one for each data-type
 MEFb_melt<-melt(MEF_b, id=c("V8"))
-ggplot(MEFb_melt, aes(variable, value)) +  geom_bar(stat = "identity", aes(fill=variable)) + theme_bw() + facet_wrap(~ V8)+ theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(MEFb_melt, aes(variable, value)) +  geom_bar(stat = "identity", aes(fill=variable)) + theme_bw() + facet_wrap(~ V8)+ theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("MEF_biomass.pdf")
 
 MEFe_melt<-melt(MEF_e, id=c("V8"))
-ggplot(MEFe_melt, aes(variable, value)) +  geom_bar(stat = "identity", aes(fill=variable)) + theme_bw()  + facet_wrap(~ V8)+ theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))+ scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(MEFe_melt, aes(variable, value)) +  geom_bar(stat = "identity", aes(fill=variable)) + theme_bw()  + facet_wrap(~ V8)+ theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))+ scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("MEF_econind.pdf")
 
 MEFl_melt<-melt(MEF_l, id=c("V8"))
-ggplot(MEFl_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity") + theme_bw()   + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(MEFl_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity") + theme_bw()   + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("MEF_a", "MEF_p", "MEF_b", "MEF_65", "MEF_75", "MEF_85", "MEF_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Modelling Efficiency (MEF)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("MEF_landings.pdf")
 
 # AE plots
 M_melt<-melt(AE_b, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw()  + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-3, 3))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw()  + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-3, 3))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("AE_biomass.pdf")
 
 M_melt<-melt(AE_e, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")   + theme_bw()  + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1)) + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco.Indicators - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")   + theme_bw()  + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1)) + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco.Indicators - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("AE_ecoind.pdf")
 
 M_melt<-melt(AE_l, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")   + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")   + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-2, 1))  + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("AE_a", "AE_p", "AE_b", "AE_65", "AE_75", "AE_85", "AE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Average Error (AE)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("AE_landings.pdf")
 
 #AAE plots
 M_melt<-melt(AAE_b, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("AAE_biomass.pdf")
 
 M_melt<-melt(AAE_e, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("AAE_ecoind.pdf")
 
 M_melt<-melt(AAE_l, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 2))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("AAE_a", "AAE_p", "AAE_b", "AAE_65", "AAE_75", "AAE_85", "AAE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Average Absolute Error (AAE)") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("AAE_land.pdf")
 
 #RMSE plots
 M_melt<-melt(RMSE_b, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("RMSE_biom.pdf")
 
 M_melt<-melt(RMSE_e, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("RMSE_ecoind.pdf")
 
 M_melt<-melt(RMSE_l, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(0, 0.75))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("RMSE_a", "RMSE_p", "RMSE_b", "RMSE_65", "RMSE_75", "RMSE_85", "RMSE_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Root Mean Squared Error") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("RMSE_land.pdf")
 
 # Correlation (Spearman rank chosen as all correlations show the same c.f. PCA analysis)
 M_melt<-melt(S_b, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Biomass - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("S_corr_biom.pdf")
 
 M_melt<-melt(S_e, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Eco. Indicators - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("S_corr_ecoind.pdf")
 
 M_melt<-melt(S_l, id=c("V8"))
-ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette1, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2003 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
+ggplot(M_melt, aes(variable, value, fill=variable))  +  geom_bar(stat = "identity")  + theme_bw() + facet_wrap(~ V8) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, size=10)) + coord_cartesian(ylim=c(-1, 1))   + scale_y_continuous(name="") + scale_x_discrete(breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"), labels=c("'64-'04(H)", "'05-'13(P)", "'74-'03", "'65-'74", "'75-'84", "'85-'94", "'95-'04"), name="") + scale_fill_manual(values=cbPalette3, name="Period", breaks=c("S_a", "S_p", "S_b", "S_65", "S_75", "S_85", "S_95"),labels=c("1964-2004 (Hindc.)", "2005-2013 (Pred.)", "1974-1903(No-Burn)", "1965-1974", "1975-1984", "1985-1994", "1995-2004")) +ggtitle("Landings - Spearman rank correlation") + theme(plot.title = element_text(size=16, face="bold")) 
 ggsave("S_corr_landings.pdf")
 
 
 
 #-----------------------------------------------------------------
 ### Forecast metric plots
-#biomass data
-BioMetrics<-as.data.frame(cbind(MEF_b[,1:2], AE_b[,1:2], AAE_b[,1:2], RMSE_b[,1:2], S_b[,1:2]))
-#colnames(BioMetrics) <- c("MEF", "AE", "AAE", "RMSE", "S.Correl.") 
-#rownames(BioMetrics) <- rownames(MEF_b)
-BioMetrics$names <- rownames(BioMetrics)
-BioMetrics$names[10]<-c("Yellowtail Fl.")
 
-substrRight <- function(x, n){
-  substr(x, nchar(x)-n+1, nchar(x))
-}
+# used Sean Lucey code instead
 
-
-BioMetrics.m <- melt(BioMetrics, id = c("names"))
-BioMetrics.m$met<-sub('_[ap]$', '', BioMetrics.m$variable)
-BioMetrics.m$name2<-paste(BioMetrics.m$names, substrRight( as.character(BioMetrics.m$variable), 1), sep="_")
-
-#BioForcPlot <-   ggplot(BioMetrics.m, aes(variable, value, fill=variable)) + geom_bar(stat = "identity")  + facet_wrap(~names, as.table=FALSE) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1, size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_fill_brewer(palette="Paired", name="Skill Metric", labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f")) + ggtitle("Forecast skill metrics - Biomass data") + theme(plot.title = element_text(size=16, face="bold")) + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "AE_a", "AE_p", "AAE_a", "AAE_p", "RMSE_a", "RMSE_p", "S_a", "S_p"), labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f"), name="")
-
-colors<-c(brewer.pal(12,"Set3"), brewer.pal(7, "Set2"), brewer.pal(3, "Set1"))
-
-BioForcPlot <-   ggplot(BioMetrics.m, aes(name2, value, fill=names)) + geom_bar(stat = "identity")  +theme_bw() + facet_wrap(~met, ncol=1) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1, size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_x_discrete(name="") + scale_fill_manual(values = colors, guide=FALSE) + ggtitle("Forecast skill metrics - Biomass data") + theme(plot.title = element_text(size=16, face="bold"))
-
-BioForcPlot
-ggsave("Forecast Biom Metrics.pdf")
-
-#landings data
-LandMetrics<-as.data.frame(cbind(MEF_l[,1:2], AE_l[,1:2], AAE_l[,1:2], RMSE_l[,1:2], S_l[,1:2]))
-#colnames(LandMetrics) <- c("MEF", "AE", "AAE", "RMSE", "S.Correl.") 
-#rownames(LandMetrics) <- rownames(MEF_l)
-LandMetrics$names <- rownames(LandMetrics)
-LandMetrics$names[10]<-c("Yellowtail Fl.")
-
-LandMetrics.m <- melt(LandMetrics, id = c("names"))
-LandMetrics.m$met<-sub('_[ap]$', '', LandMetrics.m$variable)
-LandMetrics.m$name2<-paste(LandMetrics.m$names, substrRight( as.character(LandMetrics.m$variable), 1), sep="_")
-
-#LandForcPlot <-   ggplot(LandMetrics.m, aes(variable, value, fill=variable)) + geom_bar(stat = "identity")  + facet_wrap(~names, as.table=FALSE) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1,  size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_fill_brewer(palette="Paired", name="Skill Metric", labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f")) + ggtitle("Forecast skill metrics - Landings data") + theme(plot.title = element_text(size=16, face="bold")) + theme(plot.title = element_text(size=16, face="bold")) + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "AE_a", "AE_p", "AAE_a", "AAE_p", "RMSE_a", "RMSE_p", "S_a", "S_p"), labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f"), name="")
-
-LandForcPlot <-   ggplot(LandMetrics.m, aes(name2, value, fill=names)) + geom_bar(stat = "identity")  +theme_bw() + facet_wrap(~met, ncol=1) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1, size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_x_discrete(name="") + scale_fill_manual(values = colors, guide=FALSE) + ggtitle("Forecast skill metrics - Landings data") + theme(plot.title = element_text(size=16, face="bold"))
-LandForcPlot
-ggsave("Forecast Land Metrics.pdf")
-
-#Ecoind data
-EcoMetrics<-as.data.frame(cbind(MEF_e[,1:2], AE_e[,1:2], AAE_e[,1:2], RMSE_e[,1:2], S_e[,1:2]))
-#colnames(EcoMetrics) <- c("MEF", "AE", "AAE", "RMSE", "S.Correl.") 
-#rownames(EcoMetrics) <- rownames(MEF_e)
-EcoMetrics$names <- c("Total Biomass", "Total Catch", "Catch/Biomass", "Fish Biomass", "Demersal/Pelagic Ratio", "TEPs", "Seal Biomass", "Whale Biomass", "Demersal Catch", "Pelagic Catch", "MTL System", "MTL Catch", "Biomass/PP", "Demersal biomass/PP", "Pelagic biomass/PP", "Catch/PP", "Demersal Catch/PP", "Pelagic Catch/PP",  "Fish Catch", "F.Catch/F.Biomass", "Proportion Overfished", "Value")
-
-write.csv(EcoMetrics, file="ecometrics v2.csv")
-
-EcoMetrics.m <- melt(EcoMetrics, id = c("names"))
-EcoMetrics.m$met<-sub('_[ap]$', '', EcoMetrics.m$variable)
-EcoMetrics.m$name2<-paste(EcoMetrics.m$names, substrRight( as.character(EcoMetrics.m$variable), 1), sep="_")
-
-
-#EcoForcPlot <-   ggplot(EcoMetrics.m, aes(variable, value, fill=variable)) + geom_bar(stat = "identity")  + facet_wrap(~names) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1, size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_fill_brewer(palette="Paired", name="Skill Metric", labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f")) + ggtitle("Forecast skill metrics - Ecosystem Indicators data") + theme(plot.title = element_text(size=16, face="bold")) + scale_x_discrete(breaks=c("MEF_a", "MEF_p", "AE_a", "AE_p", "AAE_a", "AAE_p", "RMSE_a", "RMSE_p", "S_a", "S_p"), labels=c("MEF_h", "MEF_f", "AE_h", "AE_f", "AAE_h", "AAE_f", "RMSE_h", "RMSE_f", "S.Corr_h", "S.Corr_f"), name="")
-
-
-EcoForcPlot  <-   ggplot(EcoMetrics.m, aes(name2, value, fill=names)) + geom_bar(stat = "identity")  +theme_bw() + facet_wrap(~met, ncol=1) + theme(axis.text.x  = element_text(angle=90, vjust=0.5, hjust=1, size=10)) + coord_cartesian(ylim=c(-2, 2)) + scale_y_continuous(name="") + scale_x_discrete(name="") + scale_fill_manual(values = colors, guide=FALSE) + ggtitle("Forecast skill metrics - Ecosystem indicators") + theme(plot.title = element_text(size=16, face="bold"))
-EcoForcPlot
-ggsave("Forecast EcoInd Metrics.pdf")
 
 
 #-----------------------------------------------------------------
@@ -614,25 +558,28 @@ landings<-cbind(metric_land_pred, metric_land_all)
 
 # PCA analysis of metrics
 biomass_s<-biomass[complete.cases(biomass),]
-biom_PC<-prcomp(biomass_s, scale=TRUE)
+biom_PC<-princomp(biomass_s, scale=TRUE)
 
 ecoind_s<-ecoind[complete.cases(ecoind),]
-ecoind_PC<-prcomp(ecoind_s, scale=TRUE)
+ecoind_PC<-princomp(ecoind_s, scale=TRUE)
 
 landings_s<-landings[complete.cases(landings),]
-landings_PC<-prcomp(landings_s, scale=TRUE)
+landings_PC<-princomp(landings_s, scale=TRUE)
 
 #creating loadings plots with arrows
 # null_PC<-data.frame(x=numeric(49), y=numeric(49))
 
-BIO_PC1_2<-data.frame(biom_PC$rotation[,1:2])
+BIO_PC1_2<-data.frame(biom_PC$loadings[,1:2])
 BIO_PC1_2$P_A<-substrRight(rownames(BIO_PC1_2), 1)
+colnames(BIO_PC1_2)<-c("PC1", "PC2", "P_A")
 
-ECO_PC1_2<-data.frame(ecoind_PC$rotation[,1:2])
+ECO_PC1_2<-data.frame(ecoind_PC$loadings[,1:2])
 ECO_PC1_2$P_A<-substrRight(rownames(ECO_PC1_2), 1)
+colnames(ECO_PC1_2)<-c("PC1", "PC2", "P_A")
 
-LAN_PC1_2<-data.frame(landings_PC$rotation[,1:2])
+LAN_PC1_2<-data.frame(landings_PC$loadings[,1:2])
 LAN_PC1_2$P_A<-substrRight(rownames(LAN_PC1_2), 1)
+colnames(LAN_PC1_2)<-c("PC1", "PC2", "P_A")
 
 # set a color scheme
 PC_colors<-brewer.pal(5, "Set1")
@@ -659,7 +606,7 @@ PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep(
 #PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("K_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[5])
 
 
-PCplot1 <- PCplot1 + geom_segment(data=BIO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="gray80") +  ggtitle("Biomass") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.5, 0.5), ylim = c(-0.5, 0.5) ) + theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+PCplot1 <- PCplot1 + geom_segment(data=BIO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="gray80") +  ggtitle("Biomass") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-1, 1), ylim = c(-0.5, 0.5) ) + theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 
 PCplot1
 ggsave("PCA_biom_all.pdf", width=11, height=11)
@@ -702,6 +649,63 @@ ggsave("PCA_land_all.pdf", width=11, height=11)
 #need to source multiplot function
 multiplot(PCplot1, PCplot2, PCplot3, cols=2)
 #save manually using Export button on Plot-Viewing Window
+
+
+#-----------------
+#### PCA plot of scores (model components)
+
+# Create Scores - data frames
+
+BIO_Scores<-as.data.frame( biom_PC$scores[,1:2])
+colnames(BIO_Scores)<-c("PC1", "PC2")
+BIORN<-rownames(BIO_Scores)
+BIORN[10]<-c("Yellowtail flnd.")
+rownames(BIO_Scores)<-BIORN
+
+
+LAN_Scores<-as.data.frame( landings_PC$scores[,1:2])
+colnames(LAN_Scores)<-c("PC1", "PC2")
+BIORN<-rownames(LAN_Scores)
+BIORN[10]<-c("Yellowtail flnd.")
+rownames(LAN_Scores)<-BIORN
+
+ECO_Scores<-as.data.frame( ecoind_PC$scores[,1:2])
+colnames(ECO_Scores)<-c("PC1", "PC2")
+
+##Plot Scores
+
+#Biomass Scores
+BioScorePlot<-ggplot(BIO_Scores, aes(x=PC1, y=PC2, label=rownames(BIO_Scores)))
+
+BioScorePlot<-BioScorePlot + coord_equal() + theme_bw() + geom_text(size=4, color="darkblue") 
+#+ coord_cartesian(xlim = c(-4.1, 4), ylim = c(-4, 4) )
+
+BioScorePlot<-BioScorePlot + geom_segment(color="gray60", aes(x = -0.2, y = 0, xend = 0.2, yend = 0)) + geom_segment(color="gray60", aes(x = 0, y = -0.2, xend = 0, yend = 0.2)) + ggtitle("Biomass component scores")
+
+setwd("/Users/eriko/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/skill assessment/figures")
+ggsave("PCA_Bio_Scores.pdf")
+
+
+#Landings Scores
+LanScorePlot<-ggplot(LAN_Scores, aes(x=PC1, y=PC2, label=rownames(LAN_Scores)))
+
+LanScorePlot<-LanScorePlot + coord_equal() + theme_bw() + geom_text(size=4, color="darkorange2") 
+
+LanScorePlot<-LanScorePlot + geom_segment(color="gray60", aes(x = -0.5, y = 0, xend = 0.5, yend = 0)) + geom_segment(color="gray60", aes(x = 0, y = -0.5, xend = 0, yend = 0.5)) + ggtitle("Landings component scores")+ coord_cartesian(xlim = c(-5, 4), ylim = c(-4, 4) )
+
+ggsave("PCA_Lan_Scores.pdf")
+
+
+#Eco indicators
+EcoScorePlot<-ggplot(ECO_Scores, aes(x=PC1, y=PC2, label=rownames(ECO_Scores)))
+
+EcoScorePlot<-EcoScorePlot + coord_equal() + theme_bw() + geom_text(size=4, color="green4") 
+
+EcoScorePlot<-EcoScorePlot + geom_segment(color="gray60", aes(x = -0.5, y = 0, xend = 0.5, yend = 0)) + geom_segment(color="gray60", aes(x = 0, y = -0.5, xend = 0, yend = 0.5)) + ggtitle("Ecological indicators component scores")
+#+ coord_cartesian(xlim = c(-5, 4), ylim = c(-4, 4) )
+
+ggsave("PCA_Eco_Scores.pdf")
+
 
 
 #-----------------------------------------------------------------

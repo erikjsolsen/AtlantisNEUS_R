@@ -557,29 +557,44 @@ landings<-cbind(metric_land_pred, metric_land_all)
 #landings<-cbind(metric_land_pred, metric_land_all, metric_land_74_03, metric_land_65_74, metric_land_75_84, metric_land_85_94, metric_land_95_04)
 
 # PCA analysis of metrics
+#using 'prcomp' to scale the loadings 
+
 biomass_s<-biomass[complete.cases(biomass),]
-biom_PC<-princomp(biomass_s, scale=TRUE)
+colnames(biomass_s) <- c("MEF_f","AE_f", "AAE_f","RMSE_f","S_f","P_f","K_f","MEF_h","AE_h", "AAE_h","RMSE_h", "S_h","P_h","K_h")  
+biom_PC<-prcomp(biomass_s, scale=TRUE)
 
 ecoind_s<-ecoind[complete.cases(ecoind),]
-ecoind_PC<-princomp(ecoind_s, scale=TRUE)
+colnames(ecoind_s)<- c("MEF_f","AE_f", "AAE_f","RMSE_f","S_f","P_f","K_f","MEF_h","AE_h", "AAE_h","RMSE_h", "S_h","P_h","K_h")  
+ecoind_PC<-prcomp(ecoind_s, scale=TRUE)
 
 landings_s<-landings[complete.cases(landings),]
-landings_PC<-princomp(landings_s, scale=TRUE)
+colnames(landings_s)<- c("MEF_f","AE_f", "AAE_f","RMSE_f","S_f","P_f","K_f","MEF_h","AE_h", "AAE_h","RMSE_h", "S_h","P_h","K_h")  
+landings_PC<-prcomp(landings_s, scale=TRUE)
+
+#create biplots
+par(mfrow=c(2,2))
+BioBP<-biplot(biom_PC, main="Biomass", cex=0.6, cex.axis=0.7,xlim=c(-0.55, 0.8))
+EcoBP<-biplot(ecoind_PC, main="Ecological indicators", cex=0.6, cex.axis=0.7, xlim=c(-0.45, 0.6))
+LanBP<-biplot(landings_PC, main="Landings", cex=0.6, cex.axis=0.7, xlim=c(-0.45, 0.9))
 
 #creating loadings plots with arrows
 # null_PC<-data.frame(x=numeric(49), y=numeric(49))
 
-BIO_PC1_2<-data.frame(biom_PC$loadings[,1:2])
+BIO_PC1_2<-data.frame(biom_PC$rotation[,1:2])
 BIO_PC1_2$P_A<-substrRight(rownames(BIO_PC1_2), 1)
 colnames(BIO_PC1_2)<-c("PC1", "PC2", "P_A")
 
-ECO_PC1_2<-data.frame(ecoind_PC$loadings[,1:2])
+rownames(BIO_PC1_2) <- c("MEF_f","AE_f", "AAE_f","RMSE_f","S_f","P_f","K_f","MEF_h","AE_h", "AAE_h","RMSE_h", "S_h","P_h","K_h")  
+
+ECO_PC1_2<-data.frame(ecoind_PC$rotation[,1:2])
 ECO_PC1_2$P_A<-substrRight(rownames(ECO_PC1_2), 1)
 colnames(ECO_PC1_2)<-c("PC1", "PC2", "P_A")
+rownames(ECO_PC1_2) <- c("MEF_f","AE_f", "AAE_f","RMSE_f","S_f","P_f","K_f","MEF_h","AE_h", "AAE_h","RMSE_h", "S_h","P_h","K_h")  
 
-LAN_PC1_2<-data.frame(landings_PC$loadings[,1:2])
+LAN_PC1_2<-data.frame(landings_PC$rotation[,1:2])
 LAN_PC1_2$P_A<-substrRight(rownames(LAN_PC1_2), 1)
 colnames(LAN_PC1_2)<-c("PC1", "PC2", "P_A")
+rownames(LAN_PC1_2) <- c("MEF_f","AE_f", "AAE_f","RMSE_f","S_f","P_f","K_f","MEF_h","AE_h", "AAE_h","RMSE_h", "S_h","P_h","K_h")  
 
 # set a color scheme
 PC_colors<-brewer.pal(5, "Set1")
@@ -606,7 +621,7 @@ PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep(
 #PCplot1 <- PCplot1 + coord_equal() + theme_bw() + geom_text(data=BIO_PC1_2[grep("K_", rownames(BIO_PC1_2)),], aes(x=PC1, y=PC2, label=P_A), size = 4, vjust=1, color=PC_colors[5])
 
 
-PCplot1 <- PCplot1 + geom_segment(data=BIO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="gray80") +  ggtitle("Biomass") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-1, 1), ylim = c(-0.5, 0.5) ) + theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+PCplot1 <- PCplot1 + geom_segment(data=BIO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="gray80") +  ggtitle("Biomass") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-1.1, 1.1), ylim = c(-0.65, 0.65) ) + theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 
 PCplot1
 ggsave("PCA_biom_all.pdf", width=11, height=11)
@@ -624,7 +639,7 @@ PCplot2 <- PCplot2 + coord_equal() + theme_bw() + geom_text(data=ECO_PC1_2[grep(
 
 
 
-PCplot2 <- PCplot2 + geom_segment(data=ECO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Ecological indicators") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.47, 0.47), ylim = c(-0.47, 0.47) )+ theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+PCplot2 <- PCplot2 + geom_segment(data=ECO_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Ecological indicators") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.77, 0.77), ylim = c(-0.47, 0.47) )+ theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 PCplot2
 ggsave("PCA_ecoind_all.pdf", width=11, height=11)
 
@@ -641,7 +656,7 @@ PCplot3 <- PCplot3 + coord_equal() + theme_bw() + geom_text(data=LAN_PC1_2[grep(
 
 
 
-PCplot3 <- PCplot3 + geom_segment(data=LAN_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Landings") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-0.51, 0.51), ylim = c(-0.51, 0.51) )+ theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+PCplot3 <- PCplot3 + geom_segment(data=LAN_PC1_2, color="gray80", aes(x=0, y=0, xend=PC1, yend=PC2), arrow=arrow(length=unit(0.2,"cm")), alpha=0.75, color="firebrick1") +  ggtitle("Landings") + theme(plot.title = element_text(size = rel(2), colour = "gray20")) + coord_cartesian(xlim = c(-1.1, 1.1), ylim = c(-0.75, 0.75) )+ theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank())
 PCplot3
 ggsave("PCA_land_all.pdf", width=11, height=11)
 
@@ -653,6 +668,18 @@ multiplot(PCplot1, PCplot2, PCplot3, cols=2)
 
 #-----------------
 #### PCA plot of scores (model components)
+
+# PCA analysis of metrics
+#using 'princomp' to get component scores
+
+biomass_s<-biomass[complete.cases(biomass),]
+biom_PC<-princomp(biomass_s, scale=TRUE)
+
+ecoind_s<-ecoind[complete.cases(ecoind),]
+ecoind_PC<-princomp(ecoind_s, scale=TRUE)
+
+landings_s<-landings[complete.cases(landings),]
+landings_PC<-princomp(landings_s, scale=TRUE)
 
 # Create Scores - data frames
 

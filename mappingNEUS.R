@@ -72,7 +72,7 @@ Map0 <- Map + geom_polygon( data=NAm, aes(x=long, y=lat, group=group),colour="wh
 
 #adds the US state map to the Atlantis ggplot object, limiting it to the spatial region of NEUS
 
-Map0 # plots the NEUS map with the US states
+Map0 # plots the NEUS map with the world map (showing US and Canada)
 
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
 ggsave("NEUS area states and CAN.pdf", width = 15, height = 15, dpi = 400) # save plot to file

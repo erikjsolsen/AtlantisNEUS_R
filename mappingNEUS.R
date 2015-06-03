@@ -13,6 +13,7 @@ library("ggmap", lib.loc="/Users/eriko/Library/R/3.0/library")
 library("RgoogleMaps", lib.loc="/Users/eriko/Library/R/3.0/library")
 library("mapdata", lib.loc="/Users/eriko/Library/R/3.0/library")
 library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
+library(RColorBrewer)
 
 
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
@@ -49,13 +50,11 @@ NEUS.f<-fortify(NEUSarea, region="AAREA") #creates X - Y points of the polygons
 
 cnames <- aggregate(cbind(long, lat) ~ id, data=NEUS.f, FUN=function(x)mean(range(x)))
 
-Map <- ggplot(NEUS.f, aes(long, lat, group = group, fill =id, label=id)) + geom_polygon(fill="#A6CEE3", colour="white") +   coord_equal() + labs(x = "Longitude", y = "Latitude") +   theme_bw() + ggtitle("Northeast US (NEUS) Atlantis model area") + theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))+ theme( axis.text.x = element_text(hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_text(size=14, face="bold")) + theme(axis.title.y = element_text(size=14, face="bold")) + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4)
 
-#+ geom_text(size=3)#actual ggplot2 function creating a ggplot map object called 'Map'
-
-#Map <- Map + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4) + coord_map()
+Map <- ggplot(NEUS.f, aes(long, lat, group = group, fill =id, label=id)) + geom_polygon(fill="gray80", colour="white") +   coord_equal() + labs(x = "Longitude", y = "Latitude") +   theme_bw() + ggtitle("Northeast US (NEUS) Atlantis model area") + theme(legend.title = element_text(size=14, face="bold")) + theme(plot.title = element_text(size = rel(1.5), face = "bold"))+ theme( axis.text.x = element_text(hjust = 0, colour = "grey20", size=14))+ theme( axis.text.y = element_text(colour = "grey20", size=14)) + theme(axis.title.x = element_text(size=14, face="bold")) + theme(axis.title.y = element_text(size=14, face="bold")) + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4)
 
 Map # plots NEUS map area
+
 
 
 ## Adding world map
@@ -76,6 +75,38 @@ Map0 # plots the NEUS map with the world map (showing US and Canada)
 
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
 ggsave("NEUS area states and CAN.pdf", width = 15, height = 15, dpi = 400) # save plot to file
+
+
+## Map showing spatial scenario areas
+CW<-c(7)
+GOM<-c(10,11, 12, 16, 17, 18, 19,  20) 
+GB<-c(8, 9, 12, 13, 14,  15)
+NEUS.f$CA<-c("No")
+NEUS.f[NEUS.f$id %in% CW,]$CA<-c("WF")
+NEUS.f[NEUS.f$id %in% GOM,]$CA<-c("GOM")
+NEUS.f[NEUS.f$id %in% GB,]$CA<-c("GB")
+#NEUS.f[NEUS.f$id %in% 8,]$CA<-c("CW&GB")
+
+
+mapcolors<-brewer.pal(4, "Set2")
+mapcolors[4]<-mapcolors[3]
+mapcolors[3]<-c("#CCCCCC")
+
+Map2<-ggplot(NEUS.f, aes(long, lat, group = group, fill =CA, label=id)) + geom_polygon(colour="white") + theme_bw() + scale_fill_manual(values=mapcolors, guide=FALSE)
+
+Map2
+
+# add world map
+
+Map2 <- Map2 +  geom_polygon( data=NAm, aes(x=long, y=lat, group=group),colour="white", fill="grey62" )  + coord_cartesian(xlim = c(-77, -63), ylim = c(34, 48) ) 
+
+
+ggsave("Spatial scenarios NEUS area.pdf", width = 15, height = 15, dpi = 400) 
+ggsave("Spatial scenarios NEUS area.png", width = 10, height = 10, dpi = 400) 
+
+
+
++ geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4)
 
 
 

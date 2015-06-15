@@ -1,4 +1,4 @@
-# ' Working Script: Analyzing spatial tiem-series scenarios
+# ' Working Script: Analyzing spatial time-series scenarios
 #' @author Erik Olsen
 #' @docType Working Script
 #' @note date created: 23.03.2015

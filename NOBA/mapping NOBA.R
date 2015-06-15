@@ -34,6 +34,10 @@ NOBA.f<-fortify(NOBAsp2, region="nyId") #creates X - Y points of the polygons
 
 cnames <- aggregate(cbind(long, lat) ~ id, data=NOBA.f, FUN=function(x)mean(range(x)))
 
+#alternative way of getting area numbers & midpoints
+cnames2<-as.data.frame(cbind(NOBAsp2@data$XcentrLon, NOBAsp2@data$YcentrLat, NOBAsp2@data$box_id))
+colnames(cnames2)<-c("LON", "LAT", "BoxNo")
+
 # use world map as background
 world<- map_data("world") 
 NOBAmap1 <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_polygon(colour="gray65", fill="gray65") +  coord_cartesian(xlim = c(-27, 70), ylim=c(58, 85))
@@ -46,12 +50,15 @@ ggsave("NOBA Atlantis map wo no.pdf", scale = 1, dpi = 400)
 
 NOBAmap1 + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4) 
 
-#NOBAmap2 <- ggplot(NOBA.f, aes(x=long, y=lat, group=id)) + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="tomato3", fill="lightskyblue1", label=id) + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4)
-#NOBAmap2
+
 
 ggsave("NOBA Atlantis map.pdf", scale = 1, dpi = 400)
 ggsave("NOBA Atlantis map.png", scale = 1, dpi = 400)
 
+#test map with new numbering
+#NOBAmap2 <- ggplot(NOBA.f, aes(x=long, y=lat, group=id)) + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="tomato3", fill="lightskyblue1", label=id) + geom_text(data=cnames2, aes(x=LON, y=LAT, group=BoxNo, label = BoxNo), size=4)
+#NOBAmap2 + geom_point(data=OilPoints, aes(x=LON, y=LAT))
+#NOBAmap2
 
 #-----------------------------------------------------------
 ### mapping with google-earth

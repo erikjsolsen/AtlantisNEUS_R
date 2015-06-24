@@ -1,11 +1,15 @@
 #' @title Function for creating Oil Spill reproduction forcing .NC file for NOBA Atlantis model
 #' @description Function  for creating a forcing .NETCDF file for reduced reproduction (larval survival)following an oil spill. 
 #' @details NOBA size and scale is hard-coded, so needs to be changed in function code to work on other models
+#' @details updated by Bec Gorton to fix writing to NC file
+#' 
 #' @param rscale = single scalar for reproduction used in boxes affected by pollution event
 #' @param boxes = single boxnumber or vector of boxnumbers for boxes affected by pollution event
 #' @param ncfile = filename for NETCDFfile to be created
 #' 
 #' @author Erik Olsen
+#' 
+
 
 repro_force <- function(rscale, boxes, ncfile){
 
@@ -57,47 +61,34 @@ detach(NOBA.groups)
 group.names.compl<-group.names
 group.names<-as.vector(group.names[2:length(group.names$GName),])
 
- 
 #' ------------------------------ 
 #' define dimensions
+t_step<-c(315360000, 346896000, 378432000)
 dimb=ncdim_def("b","",1:60)
 dimz=ncdim_def("z","",1:8)
-dimt=ncdim_def("t1","",1:3,unlim=TRUE)#,create_dimvar=FALSE)
+dimt=ncdim_def("t","",t_step,unlim=TRUE)#,create_dimvar=FALSE)
 
+#Create the list.
+varList  = vector('list', length(group.names))
 
-#' Setting up 3D arrays as NC variables for all groups
-var.t=ncvar_def("t","seconds since 2008-01-01 00:00:00 +10",dimt,0,prec="double")
-nc.var.list<-c("var.t")
 for (i in 1:length(group.names)){
-  assign(paste("var.", group.names[i], sep=""), ncvar_def(group.names[i],"PropDef",list(dimz,dimb,dimt),0,prec="double"))
-  #assign(paste("var.", group.names[i], sep=""), ncvar_def("RatioS","PropDef",list(dimz,dimb,dimt),0,prec="double"))
-  nc.var.list[i+1]<-paste("var.", group.names[i], sep="")
+    varList[[i]] = ncvar_def(group.names[i],"PropDef",list(dimz,dimb,dimt),0,prec="double")
 }
 
-
-
-#' ------------------------------
-#' Creating .NC file with all variables
-#' step 1: make a list of all NCDF variables 
-nl<-list(get(nc.var.list[1]))
-for (i in 2:length(nc.var.list)){
-  nl<-c(nl, list(get(nc.var.list[i])))
-}
-
-#' step 2: create of the actual NC file with all variables
-nc_rep=nc_create(paste(ncfile,"nc", sep=""),nl)
+nc_rep=nc_create(paste(ncfile,".nc", sep=""),varList)
 
 #' step 3: assign global attributes to temp file
 ncatt_put(nc_rep,0,"title","Temperature file, NoBa")
 ncatt_put(nc_rep,0,"geometry","Nordic.bgm")
 ncatt_put(nc_rep,0,"parameters","")
 
+ncatt_put(nc_rep,'t',"dt",86400,prec="double")
+
 #' step 4: put NC variables into NC file variables 
 #' for loop over all variables
 
-for (i in 2:length(nc.var.list)){
-  ncatt_put(nc_rep,get(nc.var.list[i]),"dt",86400,prec="double")
-  ncvar_put(nc_rep,get(nc.var.list[i]),rep_nc)
+for (i in 1:length(varList)){
+    ncvar_put(nc_rep,varList[[i]],rep_nc)
 }
 
 #' test prints of file structure
@@ -107,3 +98,4 @@ print(paste("The file has", nc_rep$nvars,"variables and", nc_rep$ndim,"dimension
 nc_close(nc_rep) # this also writes final changes to the .nc file
 
 } # end function repro_force
+

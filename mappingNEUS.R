@@ -16,7 +16,8 @@ library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
 library(RColorBrewer)
 
 
-setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
+#setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
+setwd("/Volumes/My Passport/Atlantis/Atlantis NEUS/NEUS Shape")
 
 NEUSarea <- readOGR(dsn = ".", "neus30_2006v2") #import shapefile 
 # 12. jan 2014 - the original shape file had errors in the area numbering. Fixed the numbering manually in Manifold and exported the shapefile again
@@ -77,6 +78,34 @@ setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") 
 ggsave("NEUS area states and CAN.pdf", width = 15, height = 15, dpi = 400) # save plot to file
 
 
+### NEUS Model map for PlosONE skill assessment publication
+bboxes<-c(0, 23, 24,  25, 26, 27, 28, 29)
+NEUS.f$BB<-c("Main")
+NEUS.f[NEUS.f$id %in% bboxes,]$BB<-c("BBox")
+bb.colors<-c("gold2", "deepskyblue1", "red")
+
+# extract area 23 and 24 these are hidden by islands
+a23_24<-rbind(subset(NEUS.f, id==23), subset(NEUS.f, id==24))
+
+# extract Boston and New York
+data(us.cities)
+cities<-rbind(subset(us.cities, name=="Boston MA"), subset(us.cities, name=="New York NY"))
+cities$group<-0
+cities$BB<-c("X")
+cities$id<-0
+NewYork<-data.frame(x=-73.94,y=40.67, group=1 )
+NewYork$BB<-c("X")
+NewYork$id<-0
+
+
+bb.map<-ggplot(NEUS.f, aes(long, lat, group = group, fill =BB, label=id))  + geom_polygon(colour="white") + theme_bw() + scale_fill_manual(values=bb.colors, guide=FALSE) + geom_polygon( data=NAm, aes(x=long, y=lat, group=group),colour="white", fill="grey80" )  + coord_cartesian(xlim = c(-77, -63), ylim = c(34, 48) )
+
+bb.map + geom_polygon(data=a23_24, colour="white", fill="gold2", aes(x=long, y=lat, group=group)) + geom_point(data=cities, aes(x=long, y=lat)) + geom_text(data=cities, size=6,  hjust=1.1, aes(x=long, y=lat, label=name))
+
+ggsave("NEUS area states REV.tiff")
+
+
+#####
 ## Map showing spatial scenario areas
 CW<-c(7)
 GOM<-c(10,11, 12, 16, 17, 18, 19,  20) 
@@ -107,6 +136,7 @@ ggsave("Spatial scenarios NEUS area.png", width = 10, height = 10, dpi = 400)
 
 
 + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4)
+
 
 
 

@@ -8,15 +8,15 @@
 library(rgdal)
 library(ggplot2)
 library(rgeos)
-library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
-library("ggmap", lib.loc="/Users/eriko/Library/R/3.0/library")
-library("RgoogleMaps", lib.loc="/Users/eriko/Library/R/3.0/library")
-library("mapdata", lib.loc="/Users/eriko/Library/R/3.0/library")
-library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
+library(maps)
+library(ggmap)
+library(RgoogleMaps)
+library(mapdata)
 library(RColorBrewer)
+library("maptools", lib.loc="/Library/Frameworks/R.framework/Versions/3.2/Resources/library")
 
 
-setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
+setwd("~/Documents/Research/Atlantis NEUS Spatial/NEUS Shape") #directory with NEUS shape files
 
 NEUSarea <- readOGR(dsn = ".", "neus30_2006v2") #import shapefile 
 # 12. jan 2014 - the original shape file had errors in the area numbering. Fixed the numbering manually in Manifold and exported the shapefile again
@@ -73,7 +73,7 @@ Map0 <- Map + geom_polygon( data=NAm, aes(x=long, y=lat, group=group),colour="wh
 
 Map0 # plots the NEUS map with the world map (showing US and Canada)
 
-setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
+#setwd("~/Documents/G-copy/USA studieopphold/atlantis/Atlantis NEUS/NEUS Shape") #directory with NEUS shape files
 ggsave("NEUS area states and CAN.pdf", width = 15, height = 15, dpi = 400) # save plot to file
 
 

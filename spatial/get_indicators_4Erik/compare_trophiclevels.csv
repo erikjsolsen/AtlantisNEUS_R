@@ -1,0 +1,48 @@
+ATL code,ATL name,ATL TL,GB EMAX TL,New ATL TL
+FPL,Mackerel,3.7,3.67,3.7
+FPS,Herring,3.2,3.67,3.2
+FVD,White Hake,4.2,4.05,4.2
+FVS,Bluefish,4.5,4.68,4.5
+FVB,Other Flatfish,4.2,3.873333333,4.2
+FVT,Tuna & Billfish,4.5,4.39,4.5
+FMM,Mesopelagics,3,3.37,3
+FBP,Other Small Pelagics,3.2,3.36,3.2
+FDD,Monkfish,4.5,4.05,4.5
+FDE,Anadromous Pelagics,3.3,3.54,3.3
+FDS,Atlantic Cod,4.4,4.05,4.4
+FDB,Silver Hake,4.3,4.05,4.3
+FDC,Other Demersals,3.8,3.72,3.8
+FDO,Haddock,4.1,3.72,4.1
+FDF,Yellowtail Flounder,3.2,3.72,3.2
+SHB,Spiny Dogfish,4.3,4.05,4.3
+SHD,Demersal Sharks,4.4,3.873333333,4.4
+SHP,Pelagic Sharks,4.5,4.72,4.5
+SSK,Skates and Rays,4,3.85,4
+SB,Seabirds,NA,4.14,4.14
+PIN,Pinnipeds,NA,NA,NA
+REP,Reptiles,NA,NA,NA
+WHB,Baleen Whales,NA,3.7,3.7
+WHT,Toothed Whales,NA,4.7,4.7
+CEP,Cephalopods,3.4,3.99,3.4
+BFS,Scallops,1.9,2.08,1.9
+BFF,Benthic Filter Feeders,1.9,2.08,1.9
+BG,Benthic Grazers,NA,2.335,2.335
+BML,Lobster,3.1,3.02,3.1
+BMS,Other Macrozoobenthos,2.9,3.02,2.9
+PWN,Shrimp,2.9,2.64,2.9
+ZL,Euphausids,NA,2.96,2.96
+BD,Deposit Feeders,NA,2.37,2.37
+BC,Benthic Carnivores,NA,2.41,2.41
+ZG,Jellyfish,NA,3.15,3.15
+PL,Large Phytoplankton,NA,1,1
+DF,Dinoflagellates,NA,1,1
+PS,Small Phytoplankton,NA,1,1
+ZM,Copepods,NA,2.375,2.375
+ZS,MicroZooplankton,NA,2.32,2.32
+PB,Pelagic Bacteria,NA,NA,NA
+BB,Sediment Bacteria,NA,NA,NA
+BO,Meiobenthos,NA,NA,NA
+DL,NA,NA,NA,NA
+DR,NA,NA,NA,NA
+DC,Carrion,NA,NA,NA
+DIN,NA,NA,NA,NA

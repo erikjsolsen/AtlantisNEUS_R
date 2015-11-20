@@ -25,7 +25,8 @@ library(ncdf)
 #rscale<-c(0.95)
 love.box<-rep(1,60)
 for (i in 1:length(boxes)){
-love.box[i+1]<-rscale #NB! subsetting one higher than boxno because boxno starts with 0
+#love.box[i+1]<-rscale #NB! subsetting one higher than boxno because boxno starts with 0
+love.box[boxes[i]+1]<-rscale
 }
 rmat<-matrix(love.box, nrow=8, ncol=60, byrow=TRUE) # creates a matrix of same size as group with scalars for reprodution in the right boxes
 rmat.def<-matrix(1, nrow=8, ncol=60)
@@ -38,7 +39,7 @@ rep_nc[,,2]<-rmat
 
 #' ------------------------------- 
 #' Create a list of groups_X_age_rec_ff to use to name variables in .NC file
-NOBA.groups<-read.csv("/Users/eriko/NOBA_sv/runs/NOBAtest1/nordic_groups_v02.csv")
+NOBA.groups<-read.csv("/Users/eriko/ownCloud/Research/atlantis/NOBA/NOBA_run_files/nordic_groups_v03.csv")
 group.names<-data.frame("t")
 colnames(group.names)<-c("GName")
 attach(NOBA.groups)

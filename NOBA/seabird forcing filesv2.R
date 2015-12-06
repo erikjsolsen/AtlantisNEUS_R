@@ -89,7 +89,9 @@ library(ncdf)
   ncatt_put(nc_rep,0,"geometry","Nordic.bgm")
   ncatt_put(nc_rep,0,"parameters","")
   
+  #ncatt_put(nc_rep,'t',"dt",86400,prec="double")
   ncatt_put(nc_rep,'t',"dt",86400,prec="double")
+  ncatt_put(nc_rep, 't', "units", "seconds since 1983-01-01 00:00:00 +10", prec="text")
   
   #' step 4: put NC variables into NC file variables 
   #' for loop over all variables

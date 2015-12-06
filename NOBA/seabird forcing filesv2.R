@@ -4,6 +4,11 @@
 
 
 seabird_force <- function(rscale, boxes, ncfile){
+  
+  #' setting vars to run function
+    #' boxes<-c(1, 2, 3, 4, 28, 29)
+    #' rscale<-1.5
+    #' ncfile<-c("seabird_m15")
 
 #' LIBRARY and SOURCES
 #' ---------------------
@@ -24,20 +29,23 @@ library(ncdf)
   #rscale<-c(0.95)
   love.box<-rep(1,60)
   for (i in 1:length(boxes)){
-    love.box[i+1]<-rscale #NB! subsetting one higher than boxno because boxno starts with 0
+    #love.box[i+1]<-rscale #NB! subsetting one higher than boxno because boxno starts with 0
+    love.box[boxes[i]+1]<-rscale
   }
   rmat<-matrix(love.box, nrow=8, ncol=60, byrow=TRUE) # creates a matrix of same size as group with scalars for reprodution in the right boxes
   rmat.def<-matrix(1, nrow=8, ncol=60)
   #group.list<-list(rmat.def, rmat, rmat.def) # list of three matrices, one for each time-step
   
-  #' must create array with 3 time steps and reproduction scalar in step 2
-  rep_nc<-array(rmat.def, c(8,60,3))
+  #' must create array with 2 time steps and mortality scalar in step 2 - to be able to start mortality after burn-in
+  rep_nc<-array(rmat.def, c(8,60,2))
   rep_nc[,,2]<-rmat
   
   
   #' ------------------------------- 
   #' Create a list of groups_X_age_rec_ff to use to name variables in .NC file
-  NOBA.groups<-read.csv("/Users/eriko/NOBA_sv/runs/NOBAtest1/nordic_groups_v02.csv")
+  NOBA.groups<-read.csv("/Users/eriko/ownCloud/Research/atlantis/NOBA/NOBA_run_files/nordic_groups_v03.csv")
+  #' select only seabirds
+  NOBA.groups<-subset(NOBA.groups, Code==c("SBA", "SBB")) 
   group.names<-data.frame("t")
   colnames(group.names)<-c("GName")
   attach(NOBA.groups)
@@ -61,8 +69,8 @@ library(ncdf)
   group.names<-as.vector(group.names[2:length(group.names$GName),])
   
   #' ------------------------------ 
-  #' define dimensions
-  t_step<-c(315360000, 346896000, 378432000)
+  #' define dimensions, year 0, year 25
+  t_step<-c(0, 788400000)
   dimb=ncdim_def("b","",1:60)
   dimz=ncdim_def("z","",1:8)
   dimt=ncdim_def("t","",t_step,unlim=TRUE)#,create_dimvar=FALSE)
@@ -96,4 +104,5 @@ library(ncdf)
   #' close NC file
   nc_close(nc_rep) # this also writes final changes to the .nc file
   
-} # end function seabird_force  
+} # end function repro_force
+

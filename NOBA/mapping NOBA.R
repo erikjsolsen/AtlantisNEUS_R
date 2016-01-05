@@ -7,13 +7,13 @@ library(lattice) #load lattice library
 library(RColorBrewer)
 library(plyr)
 library(ggplot2)
-library("sp", lib.loc="/Users/eriko/Library/R/3.0/library")
-library("geosphere", lib.loc="/Users/eriko/Library/R/3.0/library")
+library("sp")
+library("geosphere")
 library(rgdal)
 library(rgeos)
-library("maps", lib.loc="/Users/eriko/Library/R/3.0/library")
-library("ggmap", lib.loc="/Users/eriko/Library/R/3.0/library")
-library("RgoogleMaps", lib.loc="/Users/eriko/Library/R/3.0/library")
+library("maps")
+library("ggmap")
+library("RgoogleMaps")
 
 ###import NOBA shape-file instead of the BGM file
 

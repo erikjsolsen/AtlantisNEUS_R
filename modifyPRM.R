@@ -1,5 +1,5 @@
 #' modifyPRM.r
-#'
+#' NB - does not work with Dec 15 PRMs for Atlantis!
 #'
 #' 
 #' Created: 09.02.2015
@@ -14,7 +14,7 @@
 # 
 
 
-library("roxygen2", lib.loc="/Users/eriko/Library/R/3.0/library") 
+library("roxygen2") 
 
 modifyPRM <- function(PRMfile, SearchStr, AreaList, Plevel) {
   hh<-readLines(PRMfile, n=-1)

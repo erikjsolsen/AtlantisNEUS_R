@@ -14,11 +14,13 @@ library(rgeos)
 library("maps")
 library("ggmap")
 library("RgoogleMaps")
+library("maptools", lib.loc="/Library/Frameworks/R.framework/Versions/3.2/Resources/library")
 
 ###import NOBA shape-file instead of the BGM file
 
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/nordic_grid_220812")
-NOBAsp <- readOGR(dsn = ".", "MENUIIareasPolNewId_grass_tol0p01")
+NOBAsp <- readShapePoly("MENUIIareasPolNewId_grass_tol0p01.shp", ,proj4string=crswgs84,verbose=TRUE)
+states=readShapePoly("/home/mithil/java/R/statesp020.shp",proj4string=crswgs84,verbose=TRUE)
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/spatial")
 
 slotNames(NOBAsp) # look at the slotnames

@@ -28,7 +28,7 @@ AboveThresh <- function(x)
 #' ----------------------------
 #' Importing NOBA shape file
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/nordic_grid_220812")
-NOBAsp <- readOGR(dsn = ".", "MENUIIareasPolNewId_grass_tol0p01")
+NOBAsp <- readOGR(dsn = ".shp", "MENUIIareasPolNewId_grass_tol0p01")
 setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/spatial")
 
 slotNames(NOBAsp) # look at the slotnames

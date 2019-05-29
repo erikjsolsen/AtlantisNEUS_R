@@ -1,7 +1,7 @@
 ### Mapping NOBA Atlantis Geometry
 # By: Erik Olsen
 # Created: 9.12.2014
-# Updated: 
+# Updated: 29.05.2019
 
 library(lattice) #load lattice library
 library(RColorBrewer)
@@ -14,14 +14,17 @@ library(rgeos)
 library("maps")
 library("ggmap")
 library("RgoogleMaps")
-library("maptools", lib.loc="/Library/Frameworks/R.framework/Versions/3.2/Resources/library")
+library("maptools")
+library("mapproj")
 
 ###import NOBA shape-file instead of the BGM file
 
-setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/nordic_grid_220812")
-NOBAsp <- readShapePoly("MENUIIareasPolNewId_grass_tol0p01.shp", ,proj4string=crswgs84,verbose=TRUE)
-states=readShapePoly("/home/mithil/java/R/statesp020.shp",proj4string=crswgs84,verbose=TRUE)
-setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/spatial")
+setwd("~/ownCloud/Research/atlantis/NOBA/spatial/nordic_grid_220812")
+dsn<-getwd()
+ogrInfo(dsn=dsn,layer="MENUIIareasPolNewId_grass_tol0p01")
+NOBAsp <- readShapePoly("MENUIIareasPolNewId_grass_tol0p01.shp", proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs"),verbose=TRUE)
+#states=readShapePoly("/home/mithil/java/R/statesp020.shp",proj4string=crswgs84,verbose=TRUE)
+#setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/spatial")
 
 slotNames(NOBAsp) # look at the slotnames
 names(NOBAsp)
@@ -42,25 +45,46 @@ colnames(cnames2)<-c("LON", "LAT", "BoxNo")
 
 # use world map as background
 world<- map_data("world") 
-NOBAmap1 <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_polygon(colour="gray65", fill="gray65") +  coord_cartesian(xlim = c(-27, 70), ylim=c(58, 85))
+NOBAmap1 <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_polygon(colour="gray65", fill="gray65") +  coord_map(projection="lambert", parameters = c(0, 65), xlim = c(-27, 70), ylim=c(58, 85))
 NOBAmap1
 
-NOBAmap1 <- NOBAmap1 + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="slategray", fill="slategray1", label=id) +theme_bw() + ggtitle("Norwegian - Barents Sea ATLANTIS model area") + theme(plot.title = element_text(size=16, face="bold")) 
+
+NOBAmap1 <- NOBAmap1 + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="slategray", fill=NA, label=id) +theme_bw() + ggtitle("Norwegian - Barents Sea ATLANTIS model area") + theme(plot.title = element_text(size=16, face="bold")) 
 
 NOBAmap1
-ggsave("NOBA Atlantis map wo no.pdf", scale = 1, dpi = 400)
+#ggsave("NOBA Atlantis map wo no.pdf", scale = 1, dpi = 400)
 
-NOBAmap1 + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=4) 
-
-
+NOBAmap2 <- NOBAmap1 + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=3) 
 
 ggsave("NOBA Atlantis map.pdf", scale = 1, dpi = 400)
 ggsave("NOBA Atlantis map.png", scale = 1, dpi = 400)
 
-#test map with new numbering
-#NOBAmap2 <- ggplot(NOBA.f, aes(x=long, y=lat, group=id)) + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="tomato3", fill="lightskyblue1", label=id) + geom_text(data=cnames2, aes(x=LON, y=LAT, group=BoxNo, label = BoxNo), size=4)
-#NOBAmap2 + geom_point(data=OilPoints, aes(x=LON, y=LAT))
-#NOBAmap2
+
+# Survey coverage in relation to NOBA Model
+#------------------
+
+# load survey files & extract position data
+w2016 <- read.csv2("../surveys/vin2016_s.csv", dec=".")
+w2018 <- read.csv2("../surveys/vin2018_s.csv", dec=".")
+w2019 <- read.csv2("../surveys/vin2019_s.csv", dec=".", sep=",")
+
+w_pos <- rbind(w2016[,c(1,10,11)], w2018[,c(1,10,11)], w2019[,c(1,10,11)]) # winter survey positions
+
+
+
+# Plot survey point on NOBA map
+wintermap <- NOBAmap2 + geom_point() #winter survey data
+spawnmap <- NOBAmap2 + geom_point() #Lofoten Spawning survey data
+summermap <- NOBAmap2 + geom_point() #summer ecosystem survey
+
+
+
+# Count number of stations in each polygon user ´over´function
+res <- over(p, x) #p=points as SpatialPointsDataframe, x=SpatialPolygonDataframe
+table(res$NAME_1) # count points
+
+
+
 
 #-----------------------------------------------------------
 ### mapping with google-earth
@@ -68,4 +92,4 @@ ggsave("NOBA Atlantis map.png", scale = 1, dpi = 400)
 nn<-as.matrix(NOBA.f[,1:2])
 bb<-bbox(nn)
 
-NOBAGooglM1 <- ggmap(get_map(location = bb))
+NOBAGooglM1 <- ggmap(get_map(location = bb), maptype="terrain")

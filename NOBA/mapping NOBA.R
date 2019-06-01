@@ -16,15 +16,18 @@ library("ggmap")
 library("RgoogleMaps")
 library("maptools")
 library("mapproj")
+library("dplyr")
 
 ###import NOBA shape-file instead of the BGM file
 
 setwd("~/ownCloud/Research/atlantis/NOBA/spatial/nordic_grid_220812")
+#<<<<<<< Updated upstream
 dsn<-getwd()
 ogrInfo(dsn=dsn,layer="MENUIIareasPolNewId_grass_tol0p01")
 NOBAsp <- readShapePoly("MENUIIareasPolNewId_grass_tol0p01.shp", proj4string=CRS("+proj=longlat +datum=WGS84 +no_defs"),verbose=TRUE)
 #states=readShapePoly("/home/mithil/java/R/statesp020.shp",proj4string=crswgs84,verbose=TRUE)
 #setwd("~/Documents/G-copy/USA studieopphold/atlantis/NOBA atlantis/spatial")
+
 
 slotNames(NOBAsp) # look at the slotnames
 names(NOBAsp)
@@ -55,7 +58,7 @@ NOBAmap1
 #ggsave("NOBA Atlantis map wo no.pdf", scale = 1, dpi = 400)
 
 NOBAmap2 <- NOBAmap1 + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=3) 
-
+NOBAmap2
 ggsave("NOBA Atlantis map.pdf", scale = 1, dpi = 400)
 ggsave("NOBA Atlantis map.png", scale = 1, dpi = 400)
 
@@ -73,19 +76,32 @@ w_pos <- rbind(w2016[,c(1,10,11)], w2018[,c(1,10,11)], w2019[,c(1,10,11)]) # win
 
 
 # Plot survey point on NOBA map
-wintermap <- NOBAmap2 + geom_point() #winter survey data
+wintermap <- ggplot(world, aes(x=long, y=lat, group=group)) + geom_polygon(colour="gray65", fill="gray65") +  coord_map(projection="lambert", parameters = c(0, 65), xlim = c(-27, 70), ylim=c(58, 85)) + geom_point(data=w_pos, aes(x=lon, y=lat, group=id)) + geom_polygon(data=NOBA.f, aes(x=long, y=lat, group=group),colour="slategray", fill=NA, label=id) + ggtitle("Winter survey 2016, 2018 & 2019 in NOBA model") + geom_text(data=cnames, aes(x=long, y=lat, group=id, label = id), size=3, colour="red") 
+ggsave("../surveys/wintersurvey_NOBA.png", scale=1, dpi=400)
+
+
 spawnmap <- NOBAmap2 + geom_point() #Lofoten Spawning survey data
 summermap <- NOBAmap2 + geom_point() #summer ecosystem survey
 
 
 
 # Count number of stations in each polygon user ´over´function
-res <- over(p, x) #p=points as SpatialPointsDataframe, x=SpatialPolygonDataframe
-table(res$NAME_1) # count points
+# winter survey
+coords = cbind(w_pos$lon, w_pos$lat)
+colnames(coords) <- c("long", "lat")
+w_sp = SpatialPoints(coords, proj4string=CRS("+proj=longlat +ellps=GRS80"))
+
+res <- over(w_sp, NOBAsp2) #p=points as SpatialPoints, x=SpatialPolygonDataframe
+#table(res$NAME_1) # count points
+
+w_tbl <- count(res, box_id)
+
+write.csv2(w_tbl, file="../surveys/winter_NOBA.csv")
 
 
 
 
+############
 #-----------------------------------------------------------
 ### mapping with google-earth
 #Not working - only generates a square map...
